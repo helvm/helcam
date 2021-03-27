@@ -1,11 +1,16 @@
-module HelVM.HelCam.Machines.SubLeq.EvaluatorTest where
+module HelVM.HelCam.Machines.SubLeq.EvaluatorSpec (spec) where
 
 import HelVM.HelCam.Machines.SubLeq.Evaluator
-import HelVM.HelCam.Machines.SubLeq.EvaluatorTestData
+import HelVM.HelCam.Machines.SubLeq.EvaluatorSpecData
 
 import HelVM.HelCam.Common.MockIO
 
+import Test.Hspec
+import Test.Hspec.Contrib.HUnit (fromHUnitTest)
 import Test.HUnit
+
+spec :: Spec
+spec = fromHUnitTest testsOfSQEvaluator
 
 testsOfSQEvaluator :: Test
 testsOfSQEvaluator = TestList

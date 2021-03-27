@@ -1,4 +1,4 @@
-module HelVM.HelCam.Machines.ETA.EvaluatorTestData where
+module HelVM.HelCam.Machines.ETA.EvaluatorSpecData where
 
 import HelVM.HelCam.Machines.ETA.Token
 

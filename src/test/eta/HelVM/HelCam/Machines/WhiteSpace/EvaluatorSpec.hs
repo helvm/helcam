@@ -1,13 +1,18 @@
-module HelVM.HelCam.Machines.WhiteSpace.EvaluatorTest where
+module HelVM.HelCam.Machines.WhiteSpace.EvaluatorSpec (spec) where
 
 import HelVM.HelCam.Machines.WhiteSpace.Evaluator
 
-import HelVM.HelCam.Machines.WhiteSpace.EvaluatorTestData
+import HelVM.HelCam.Machines.WhiteSpace.EvaluatorSpecData
 
 import HelVM.HelCam.Common.MockIO
 import HelVM.HelCam.Common.Util
 
+import Test.Hspec
+import Test.Hspec.Contrib.HUnit (fromHUnitTest)
 import Test.HUnit
+
+spec :: Spec
+spec = fromHUnitTest testsOfWSEvaluator
 
 testsOfWSEvaluator :: Test
 testsOfWSEvaluator = test

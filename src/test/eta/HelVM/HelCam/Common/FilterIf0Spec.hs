@@ -1,8 +1,10 @@
-module HelVM.HelCam.Common.FilterIf0Test where
+module HelVM.HelCam.Common.FilterIf0Spec (spec) where
 
 import HelVM.HelCam.Common.WrapperIO
 import HelVM.HelCam.Common.MockIO
 
+import Test.Hspec
+import Test.Hspec.Contrib.HUnit (fromHUnitTest)
 import Test.HUnit
 
 wFilterIf0 :: WrapperIO m => m ()
@@ -15,6 +17,9 @@ wFilterIf0 = do
     else do
       wPutChar char
       wFilterIf0
+
+spec :: Spec
+spec = fromHUnitTest testsOfFilterIf0
 
 testsOfFilterIf0 :: Test
 testsOfFilterIf0 = test

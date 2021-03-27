@@ -1,9 +1,14 @@
-module HelVM.HelCam.Machines.WhiteSpace.OperandParsersTest where
+module HelVM.HelCam.Machines.WhiteSpace.OperandParsersSpec (spec) where
 
 import HelVM.HelCam.Machines.WhiteSpace.OperandParsers
 import HelVM.HelCam.Machines.WhiteSpace.Token
 
+import Test.Hspec
+import Test.Hspec.Contrib.HUnit (fromHUnitTest)
 import Test.HUnit
+
+spec :: Spec
+spec = fromHUnitTest testsOfWSOperandParsers
 
 testsOfWSOperandParsers :: Test
 testsOfWSOperandParsers = TestList

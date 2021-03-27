@@ -1,10 +1,15 @@
-module HelVM.HelCam.Machines.ETA.EvaluatorUtilTest where
+module HelVM.HelCam.Machines.ETA.EvaluatorUtilSpec (spec) where
 
 import HelVM.HelCam.Machines.ETA.EvaluatorUtil
-import HelVM.HelCam.Machines.ETA.EvaluatorTestData
+import HelVM.HelCam.Machines.ETA.EvaluatorSpecData
 import HelVM.HelCam.Machines.ETA.Token
 
+import Test.Hspec
+import Test.Hspec.Contrib.HUnit (fromHUnitTest)
 import Test.HUnit
+
+spec :: Spec
+spec = fromHUnitTest testsOfETAEvaluatorUtil
 
 testsOfETAEvaluatorUtil :: Test
 testsOfETAEvaluatorUtil = TestList

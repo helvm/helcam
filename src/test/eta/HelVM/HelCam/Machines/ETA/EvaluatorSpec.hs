@@ -1,12 +1,17 @@
-module HelVM.HelCam.Machines.ETA.EvaluatorTest where
+module HelVM.HelCam.Machines.ETA.EvaluatorSpec (spec) where
 
 import HelVM.HelCam.Machines.ETA.Evaluator
 
-import HelVM.HelCam.Machines.ETA.EvaluatorTestData
+import HelVM.HelCam.Machines.ETA.EvaluatorSpecData
 
 import HelVM.HelCam.Common.MockIO
 
+import Test.Hspec
+import Test.Hspec.Contrib.HUnit (fromHUnitTest)
 import Test.HUnit
+
+spec :: Spec
+spec = fromHUnitTest testsOfETAEvaluator
 
 testsOfETAEvaluator :: Test
 testsOfETAEvaluator = test

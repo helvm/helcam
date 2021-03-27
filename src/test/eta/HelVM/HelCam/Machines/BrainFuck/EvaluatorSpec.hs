@@ -1,11 +1,16 @@
-module HelVM.HelCam.Machines.BrainFuck.EvaluatorTest where
+module HelVM.HelCam.Machines.BrainFuck.EvaluatorSpec (spec) where
 
 import HelVM.HelCam.Machines.BrainFuck.Evaluator
-import HelVM.HelCam.Machines.BrainFuck.EvaluatorTestData
+import HelVM.HelCam.Machines.BrainFuck.EvaluatorSpecData
 
 import HelVM.HelCam.Common.MockIO
 
+import Test.Hspec
+import Test.Hspec.Contrib.HUnit (fromHUnitTest)
 import Test.HUnit
+
+spec :: Spec
+spec = fromHUnitTest testsOfBFEvaluator
 
 testsOfBFEvaluator :: Test
 testsOfBFEvaluator = TestList

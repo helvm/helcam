@@ -1,4 +1,4 @@
-module HelVM.HelCam.Machines.SubLeq.EvaluatorTestData where
+module HelVM.HelCam.Machines.SubLeq.EvaluatorSpecData where
 
 import HelVM.HelCam.Common.Util
 

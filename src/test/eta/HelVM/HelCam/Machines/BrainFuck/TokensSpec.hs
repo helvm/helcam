@@ -1,10 +1,15 @@
-module HelVM.HelCam.Machines.BrainFuck.TokensTest where
+module HelVM.HelCam.Machines.BrainFuck.TokensSpec (spec) where
 
-import HelVM.HelCam.Machines.BrainFuck.EvaluatorTestData
+import HelVM.HelCam.Machines.BrainFuck.EvaluatorSpecData
 
 import HelVM.HelCam.Machines.BrainFuck.Lexer
 
+import Test.Hspec
+import Test.Hspec.Contrib.HUnit (fromHUnitTest)
 import Test.HUnit
+
+spec :: Spec
+spec = fromHUnitTest testsOfBFTokens
 
 testsOfBFTokens :: Test
 testsOfBFTokens = test

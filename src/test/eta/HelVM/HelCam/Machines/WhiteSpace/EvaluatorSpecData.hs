@@ -1,4 +1,4 @@
-module HelVM.HelCam.Machines.WhiteSpace.EvaluatorTestData where
+module HelVM.HelCam.Machines.WhiteSpace.EvaluatorSpecData where
 
 import HelVM.HelCam.Machines.WhiteSpace.Token
 import HelVM.HelCam.Machines.WhiteSpace.Instruction

@@ -1,10 +1,15 @@
-module HelVM.HelCam.Machines.WhiteSpace.ParserTest where
+module HelVM.HelCam.Machines.WhiteSpace.ParserSpec (spec) where
 
-import HelVM.HelCam.Machines.WhiteSpace.EvaluatorTestData
+import HelVM.HelCam.Machines.WhiteSpace.EvaluatorSpecData
 
 import HelVM.HelCam.Machines.WhiteSpace.Parser
 
+import Test.Hspec
+import Test.Hspec.Contrib.HUnit (fromHUnitTest)
 import Test.HUnit
+
+spec :: Spec
+spec = fromHUnitTest testsOfWSParser
 
 testsOfWSParser :: Test
 testsOfWSParser = TestList

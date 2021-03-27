@@ -1,12 +1,17 @@
-module HelVM.HelCam.Machines.ETA.LexerTest where
+module HelVM.HelCam.Machines.ETA.LexerSpec (spec) where
 
-import HelVM.HelCam.Machines.ETA.EvaluatorTestData
+import HelVM.HelCam.Machines.ETA.EvaluatorSpecData
 
 import HelVM.HelCam.Machines.ETA.Lexer
 import HelVM.HelCam.Machines.ETA.Token
 
 
+import Test.Hspec
+import Test.Hspec.Contrib.HUnit (fromHUnitTest)
 import Test.HUnit
+
+spec :: Spec
+spec = fromHUnitTest testsOfETATokens
 
 testsOfETATokens :: Test
 testsOfETATokens = test

@@ -1,4 +1,4 @@
-module HelVM.HelCam.Machines.BrainFuck.EvaluatorTestData where
+module HelVM.HelCam.Machines.BrainFuck.EvaluatorSpecData where
 
 import HelVM.HelCam.Common.Util
 
