@@ -122,49 +122,13 @@ executable helcam
   other-modules:
         AppOptions
         EvalOptions
-
-        HelVM.HelCam.Common.Memories.RAM
-        HelVM.HelCam.Common.Memories.Stack
-        HelVM.HelCam.Common.MockIO
-        HelVM.HelCam.Common.OrError
-        HelVM.HelCam.Common.Types.CellType
-        HelVM.HelCam.Common.Types.StackType
-        HelVM.HelCam.Common.Types.RAMType
-        HelVM.HelCam.Common.Util
-        HelVM.HelCam.Common.WrapperIO
-
-        HelVM.HelCam.Machines.BrainFuck.Evaluator
-        HelVM.HelCam.Machines.BrainFuck.Lexer
-        HelVM.HelCam.Machines.BrainFuck.Symbol
-        HelVM.HelCam.Machines.BrainFuck.TableOfInstructions
-        HelVM.HelCam.Machines.BrainFuck.TapeOfSymbols
-        HelVM.HelCam.Machines.BrainFuck.Token
-
-        HelVM.HelCam.Machines.ETA.Evaluator
-        HelVM.HelCam.Machines.ETA.EvaluatorUtil
-        HelVM.HelCam.Machines.ETA.Lexer
-        HelVM.HelCam.Machines.ETA.StackOfSymbols
-        HelVM.HelCam.Machines.ETA.Token
-
-        HelVM.HelCam.Machines.SubLeq.Evaluator
-        HelVM.HelCam.Machines.SubLeq.Lexer
-        HelVM.HelCam.Machines.SubLeq.Symbol
-
-        HelVM.HelCam.Machines.WhiteSpace.Evaluator
-        HelVM.HelCam.Machines.WhiteSpace.EvaluatorUtil
-        HelVM.HelCam.Machines.WhiteSpace.Instruction
-        HelVM.HelCam.Machines.WhiteSpace.Lexer
-        HelVM.HelCam.Machines.WhiteSpace.OperandParsers
-        HelVM.HelCam.Machines.WhiteSpace.Parser
-        HelVM.HelCam.Machines.WhiteSpace.StackOfSymbols
-        HelVM.HelCam.Machines.WhiteSpace.Token
-  other-extensions:
   build-depends:
       base
     , relude               == 0.7.0.0
     , containers           == 0.6.2.1
     , split
     , data-default
+    , helcam
 
     , optparse-applicative >= 0.14.3.0
     , pretty-simple
