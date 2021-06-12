@@ -30,6 +30,7 @@ import HelVM.HelMA.Common.Types.TokenType
 import HelVM.HelMA.Common.Util
 
 import Data.Default as Default
+import Prelude hiding (swap)
 
 import qualified Data.IntMap   as IntMap
 import qualified Data.Sequence as Seq
@@ -65,6 +66,9 @@ class (Default cell , Show cell , Integral cell) => Evaluator cell r where
 
   next :: (Stack cell s , RAM cell m) => InstructionUnit -> s -> m -> r
   next iu@(IU il ic is) = doInstruction (indexOrError ("next"::Text,iu) il ic) (IU il (ic+1) is)
+  
+--  nextInstruction :: (Stack cell s , RAM cell m) => InstructionUnit -> s -> m -> r
+--  nextInstruction iu s h = next iu s h
 
   ----
 
@@ -78,18 +82,18 @@ class (Default cell , Show cell , Integral cell) => Evaluator cell r where
 
   -- Stack instructions
   doInstruction (Liter symbol) iu stack h = next iu (push1   (fromIntegral symbol) stack) h
-  doInstruction (Copy  index)  iu stack h = next iu (copy    index  stack) h
-  doInstruction (Slide index)  iu stack h = next iu (slide   index  stack) h
-  doInstruction  Dup           iu stack h = next iu (dup            stack) h
-  doInstruction  Swap          iu stack h = next iu (Stack.swap     stack) h
-  doInstruction  Discard       iu stack h = next iu (discard        stack) h
+  doInstruction (Copy  index)  iu stack h = unsafe $ next' <$> copy    index  stack where next' s' = next iu s' h
+  doInstruction (Slide index)  iu stack h = unsafe $ next' <$> slide   index  stack where next' s' = next iu s' h
+  doInstruction  Dup           iu stack h = unsafe $ next' <$> dup            stack where next' s' = next iu s' h
+  doInstruction  Swap          iu stack h = unsafe $ next' <$> swap           stack where next' s' = next iu s' h
+  doInstruction  Discard       iu stack h = unsafe $ next' <$> discard        stack where next' s' = next iu s' h
 
   -- Arithmetic
-  doInstruction (Binary op)    iu stack h = next iu (binaryOp op stack) h
+  doInstruction (Binary op)    iu stack h = unsafe $ next' <$> binaryOp op stack where next' s' = next iu s' h
 
   -- Heap access
-  doInstruction Store iu stack h = next iu stack' (store address value h) where (value , address , stack') = pop2 stack
-  doInstruction Load  iu stack h = next iu (push1 (genericLoad h address) stack') h where (address , stack') = pop1 stack
+  doInstruction Store iu stack h = next iu stack' (store address value h) where (value , address , stack') = unsafe $ pop2 stack
+  doInstruction Load  iu stack h = next iu (push1 (genericLoad h address) stack') h where (address , stack') = unsafe $ pop1 stack
 
   -- Control
   doInstruction (Mark     _)  iu                          stack h = next  iu                                     stack h
@@ -99,7 +103,7 @@ class (Default cell , Show cell , Integral cell) => Evaluator cell r where
   doInstruction (Branch t l) (IU il ic is) stack h
     | doBranchTest t symbol = next (IU il (findAddress il l) is) stack' h
     | otherwise             = next (IU il ic                 is) stack' h
-    where (symbol , stack') = pop1 stack
+    where (symbol , stack') = unsafe $ pop1 stack
 
   -- Other
   doInstruction End iu s m = doEnd iu s m
@@ -126,12 +130,14 @@ instance (Default cell , Read cell , Show cell , Integral cell , WrapperIO m) =>
 
   doInputChar iu stack h = doInputChar' =<< wGetChar where
     doInputChar' char = next iu stack' (storeChar address char h)
-    (address , stack') = pop1 stack
+    (address , stack') = unsafe $ pop1 stack
 
   doInputNum iu stack h = doInputNum' =<< wGetLine where
     doInputNum' line = next iu stack' (storeNum address line h)
-    (address , stack') = pop1 stack
+    (address , stack') = unsafe $ pop1 stack
 
-  doOutputChar iu stack h = wPutChar (genericChr symbol) *> next iu stack' h  where (symbol , stack') = pop1 stack
+  doOutputChar iu stack h = doOutputChar' $ unsafe $ pop1 stack where
+    doOutputChar' (symbol , stack') = wPutChar (genericChr symbol) *> next iu stack' h
 
-  doOutputNum iu stack h = wPutStr (show symbol) *> next iu stack' h  where (symbol , stack') = pop1 stack
+  doOutputNum iu stack h = doOutputNum' $ unsafe $ pop1 stack where
+    doOutputNum' (symbol , stack') = wPutStr (show symbol) *> next iu stack' h

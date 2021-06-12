@@ -13,7 +13,8 @@ module HelVM.HelMA.Common.Memories.StackConst (
   slide,
   dup,
   copy,
-  pushChar1,
+  flipPush1,
+  charPush1,
   genericPush1,
   push1,
   push2,
@@ -27,6 +28,8 @@ module HelVM.HelMA.Common.Memories.StackConst (
 
 import HelVM.HelMA.Common.BinaryOperator
 
+import HelVM.HelMA.Common.Util
+
 import Prelude hiding (divMod , drop , empty , fromList , splitAt , swap)
 
 import HelVM.HelMA.Common.Collections.Drop
@@ -39,57 +42,60 @@ type Index = Int
 
 -- Arithmetic
 
-divMod :: (Integral e , Stack e c) => c -> c
+divMod :: (Integral e , Stack e c) => c -> Result c
 divMod = binaryOps [Mod , Div]
 
-sub :: (Integral e , Stack e c) => c -> c
+sub :: (Integral e , Stack e c) => c -> Result c
 sub = binaryOp Sub
 
-binaryOp :: (Integral e , Stack e c) => BinaryOperator -> c -> c
+binaryOp :: (Integral e , Stack e c) => BinaryOperator -> c -> Result c
 binaryOp op = binaryOps [op]
 
-binaryOps :: (Integral e , Stack e c) => [BinaryOperator] -> c -> c
-binaryOps ops c = pushList (calculateOps e e' ops) c' where (e , e', c') = pop2 c
+binaryOps :: (Integral e , Stack e c) => [BinaryOperator] -> c -> Result c
+binaryOps ops c = binaryOps' <$> pop2 c where
+  binaryOps' (e , e', c') = pushList (calculateOps e e' ops) c'
 
 -- Stack instructions
 
-halibut :: (Integral e , Stack e c) => c -> c
-halibut c
-  | i <= 0    = copy (negate i) c'
-  | otherwise = move i c'
-    where
-      i = fromIntegral e
-      (e , c') = pop1 c
+halibut :: (Integral e , Stack e c) => c -> Result c
+halibut c = halibut' =<< pop1 c where
+  halibut' (e , c')
+    | i <= 0    = copy (negate i) c'
+    | otherwise = pure $ move i c'
+      where i = fromIntegral e
 
 move :: Stack e c => Index -> c -> c
 move i c = c1 <> c2 <> c3 where
   (c1 , c3) = splitAt 1 c'
   (c2 , c') = splitAt i c
 
-swap :: Stack e c => c -> c
-swap c = push2 e' e c' where (e , e', c') = pop2 c
+swap :: Stack e c => c -> Result c
+swap c = swap' <$> pop2 c where
+  swap' (e , e', c') = push2 e' e c'
 
-discard :: Stack e c => c -> c
-discard = drop 1
 
-slide :: Stack e c => Index -> c -> c
-slide i c = push1 e (drop i c') where (e , c') = pop1 c
+slide :: Stack e c => Index -> c -> Result c
+slide i c = slide' <$> pop1 c where
+  slide' (e , c') = push1 e $ drop i c'
 
-dup :: Stack e c => c -> c
+dup :: Stack e c => c -> Result c
 dup = copy 0
 
-copy :: Stack e c => Index -> c -> c
-copy i c = push1 (c `index` i) c
+copy :: Stack e c => Index -> c -> Result c
+copy i c = flipPush1 c <$> indexEither c i
 
 -- Push instructions
 
-pushChar1 :: (Num e , Stack e c) => Char -> c -> c
-pushChar1 = genericPush1 . ord
+flipPush1 :: Stack e c => c -> e -> c
+flipPush1 = flip push1
+
+charPush1 :: (Num e , Stack e c) => Char -> c -> c
+charPush1 = genericPush1 . ord
 
 genericPush1 :: (Integral v , Num e , Stack e c) => v -> c -> c
 genericPush1 = push1 . fromIntegral
 
-push1 ::  Stack e c => e -> c -> c
+push1 :: Stack e c => e -> c -> c
 push1 e = pushList [e]
 
 push2 :: Stack e c => e -> e -> c -> c

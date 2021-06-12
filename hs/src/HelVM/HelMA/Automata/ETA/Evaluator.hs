@@ -50,16 +50,16 @@ class (Show cell , Integral cell) => Evaluator cell r where
 
   -- Stack instructions
   doInstruction (Just N) iu s = next iu' (push1 symbol s) where (symbol , iu') = parseNumber iu
-  doInstruction (Just H) iu s = next iu $ halibut s
+  doInstruction (Just H) iu s = unsafe $ next iu <$> halibut s
 
   -- Arithmetic
-  doInstruction (Just S) iu s = next iu $ sub s
-  doInstruction (Just E) iu s = next iu $ Stack.divMod s
+  doInstruction (Just S) iu s = unsafe $ next iu <$> sub s
+  doInstruction (Just E) iu s = unsafe $ next iu <$> Stack.divMod s
 
   -- Control
   doInstruction (Just R) iu s = next iu s
-  doInstruction (Just A) iu@(IU il ic) s = next iu (push1 (genericNextLabel il ic) s)
-  doInstruction (Just T) iu@(IU il _ ) s = transfer $ pop2 s where
+  doInstruction (Just A) iu@(IU il ic) s = next iu $ flipPush1 s $ genericNextLabel il ic
+  doInstruction (Just T) iu@(IU il _ ) s = unsafe $ transfer <$> pop2 s where
     transfer (_ , 0 , s') = next iu s'
     transfer (0 , _ , _ ) = doEnd iu s
     transfer (l , _ , s') = next (IU il $ genericFindAddress il l) s'
@@ -76,6 +76,7 @@ instance (Default cell , Read cell , Show cell , Integral cell , WrapperIO m) =>
   doEnd iu s = wLogShow iu *> wLogShow s
 
   doInputChar iu s = doInputChar' =<< wGetChar where
-    doInputChar' char = next iu $ pushChar1 char s
+    doInputChar' char = next iu $ charPush1 char s
 
-  doOutputChar iu s = wPutChar (genericChr symbol) *> next iu s' where (symbol , s') = pop1 s
+  doOutputChar iu s = unsafe $ doOutputChar' <$> pop1 s where
+    doOutputChar' (symbol , s') = wPutChar (genericChr symbol) *> next iu s'

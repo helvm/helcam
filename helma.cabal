@@ -42,14 +42,8 @@ library
         HelVM.HelMA.Common.Collections.Lookup
         HelVM.HelMA.Common.Collections.Pop
         HelVM.HelMA.Common.Collections.SplitAt
-        HelVM.HelMA.Common.Memories.RAM
         HelVM.HelMA.Common.Memories.RAMConst
-        HelVM.HelMA.Common.Memories.RAMImpl
-        HelVM.HelMA.Common.Memories.RAMUtil
-        HelVM.HelMA.Common.Memories.Stack
         HelVM.HelMA.Common.Memories.StackConst
-        HelVM.HelMA.Common.Memories.StackImpl
-        HelVM.HelMA.Common.Memories.StackUtil
         HelVM.HelMA.Common.IO.MockIO
         HelVM.HelMA.Common.IO.WrapperIO
         HelVM.HelMA.Common.OrError

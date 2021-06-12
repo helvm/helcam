@@ -100,7 +100,6 @@ spec = do
   describe "simpleEvalIL" $ do
     forM_ [ ("call"     , [Call "A", End , Mark "A", Return] , "")
           , ("push-pop" , [Liter 0 , Discard , End]          , "")
-          , ("pop"      , [Discard , End]                    , "")
           ] $ \(fileName , il , input) -> do
       it fileName $ do
         flipEvalMockIO input (evalIL il SeqStackType IntMapRAMType) `goldenShouldBe` buildAbsoluteOutFileName ("simpleEvalIL" </> "logging" </> fileName)

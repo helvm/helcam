@@ -13,6 +13,12 @@ type Interact = Input -> Output
 emptyInput :: Input
 emptyInput = []
 
+type Result a = Either Text a
+
+unsafe :: Result a -> a
+unsafe (Right a) = a
+unsafe (Left t) = error t
+
 -- ListUtil
 
 chunksOf :: Int -> [a] -> [[a]]
