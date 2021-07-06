@@ -18,7 +18,6 @@ module HelVM.HelMA.Automaton.Memories.StackConst (
   genericPush1,
   push1,
   push2,
-  empty,
   lookup,
   splitAt,
   drop,

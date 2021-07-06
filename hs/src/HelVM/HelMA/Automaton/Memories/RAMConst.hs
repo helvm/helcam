@@ -7,7 +7,6 @@ module HelVM.HelMA.Automaton.Memories.RAMConst (
   genericStore,
   store,
   fromList,
-  empty,
   RAM,
   intMapFromList
 ) where
