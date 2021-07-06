@@ -1,6 +1,6 @@
 module HelVM.Common.Containers.FromList where
 
-import Prelude hiding (empty , fromList , one)
+import Prelude hiding (fromList , one)
 
 import qualified Data.List.Index     as List
 import qualified Data.List.Singleton as List

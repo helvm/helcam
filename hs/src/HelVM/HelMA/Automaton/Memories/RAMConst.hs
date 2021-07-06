@@ -12,7 +12,7 @@ module HelVM.HelMA.Automaton.Memories.RAMConst (
 ) where
 
 import Data.Default
-import Prelude      hiding (empty , fromList , splitAt)
+import Prelude      hiding (fromList , splitAt)
 
 import HelVM.Common.Containers.FromList
 import HelVM.Common.Containers.Insert

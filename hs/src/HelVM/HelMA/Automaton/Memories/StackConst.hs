@@ -29,7 +29,7 @@ import HelVM.HelMA.Automaton.BinaryOperator
 
 import HelVM.Common.Safe
 
-import Prelude hiding (divMod , drop , empty , fromList , splitAt , swap)
+import Prelude hiding (divMod , drop , fromList , splitAt , swap)
 
 import HelVM.Common.Containers.FromList
 import HelVM.Common.Containers.Lookup
@@ -104,4 +104,4 @@ pushList es c = fromList es <> c
 
 ----
 
-type Stack e c = (Show c , Semigroup c , FromList e c , Lookup e c , SplitAt e c , Pop1 e c , Pop2 e c)
+type Stack e c = (Show c , FromList e c , Lookup e c , SplitAt e c , Pop1 e c , Pop2 e c)
