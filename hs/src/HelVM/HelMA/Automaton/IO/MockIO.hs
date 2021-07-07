@@ -10,7 +10,7 @@ module HelVM.HelMA.Automaton.IO.MockIO (
 ) where
 
 import HelVM.HelMA.Automaton.API.IOTypes
-import HelVM.HelMA.Automaton.IO.WrapperIO
+import HelVM.HelMA.Automaton.IO.BusinessIO
 
 import HelVM.Common.Containers.SplitAt
 
@@ -36,7 +36,7 @@ evalMockIO mockIO = getLogged . execState mockIO . createMockIO
 
 ----
 
-instance WrapperIO MockIO where
+instance BusinessIO MockIO where
   wGetChar = mockGetChar
   wGetLine = mockGetLine
   wPutChar = mockPutChar

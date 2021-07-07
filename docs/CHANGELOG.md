@@ -52,7 +52,7 @@
 ## 0.4.0.0  -- 2020-06-22
 
 * Add Evaluator of BrainFuck and WhiteSpace
-* Add WrapperIO, FilterIf0, MockIO and tests for FilterIf0
+* Add BusinessIO, FilterIf0, MockIO and tests for FilterIf0
 
 ## 0.3.0.0  -- 2020-05-30
 

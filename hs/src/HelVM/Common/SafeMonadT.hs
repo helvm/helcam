@@ -4,7 +4,6 @@ module HelVM.Common.SafeMonadT (
   hoistError,
   safeMonadToFail,
   unsafeRunExceptT,
-  SafeMonadT_,
   SafeMonadT,
 ) where
 
@@ -35,5 +34,4 @@ unsafeRunExceptT = fmap unsafe . runExceptT
 
 ----
 
-type SafeMonadT_ m = SafeMonadT m ()
 type SafeMonadT m a = ExceptT Error m a

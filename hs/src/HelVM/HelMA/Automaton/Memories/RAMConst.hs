@@ -1,4 +1,3 @@
-{-#LANGUAGE ConstraintKinds#-}
 module HelVM.HelMA.Automaton.Memories.RAMConst (
   genericLoad,
   load,

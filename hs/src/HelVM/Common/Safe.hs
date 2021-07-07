@@ -24,9 +24,7 @@ module HelVM.Common.Safe (
 
   unsafe,
 
-  SafeFail_,
   SafeFail,
-  Safe_,
   Safe,
   Error,
 ) where
@@ -103,12 +101,10 @@ unsafe (Left a) = error a
 
 ----
 
-type SafeFail_ m = SafeFail m ()
 type SafeFail m a = m (Safe a)
 
 type SafeLegacy a = Either String a
 
-type Safe_  = Safe ()
 type Safe a = Either Error a
 
 type ErrorTuple = (Error , Error)

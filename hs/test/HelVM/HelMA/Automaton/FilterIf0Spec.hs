@@ -1,11 +1,11 @@
 module HelVM.HelMA.Automaton.FilterIf0Spec (spec) where
 
-import HelVM.HelMA.Automaton.IO.WrapperIO
+import HelVM.HelMA.Automaton.IO.BusinessIO
 import HelVM.HelMA.Automaton.IO.MockIO
 
 import Test.Hspec
 
-wFilterIf0 :: WrapperIO m => m ()
+wFilterIf0 :: BusinessIO m => m ()
 wFilterIf0 = do
   char <- wGetChar
   if char == '0'

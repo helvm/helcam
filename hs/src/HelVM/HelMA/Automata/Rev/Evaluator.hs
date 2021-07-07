@@ -5,27 +5,20 @@ module HelVM.HelMA.Automata.Rev.Evaluator (
 
 import HelVM.HelMA.Automaton.API.IOTypes
 import HelVM.HelMA.Automaton.API.EvalParams
-import HelVM.HelMA.Automaton.IO.WrapperIO
+import HelVM.HelMA.Automaton.IO.BusinessIO
 
 import HelVM.Common.SafeMonadT
 
 import qualified Data.Text as Text
 
-evalParams :: (Monad m , Evaluator (m ())) => EvalParams -> SafeMonadT_ m
+evalParams :: BusinessIO m => EvalParams -> SafeMonadT m ()
 evalParams = hoistMonad . eval . source
 
-eval :: Evaluator r => Source ->  r
+eval :: BusinessIO m => Source -> m ()
 eval = evalLines . lines
 
-evalLines :: Evaluator r => [Source] -> r
+evalLines :: BusinessIO m => [Source] -> m ()
 evalLines ll = doOutput $ unlines $ Text.reverse <$> ll
 
-----
-
-class Evaluator r where
-  doOutput :: Source ->  r
-
-----
-
-instance WrapperIO m => Evaluator (m ()) where
-  doOutput = wPutStr
+doOutput :: BusinessIO m => Source -> m ()
+doOutput = wPutStr

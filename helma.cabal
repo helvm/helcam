@@ -47,7 +47,7 @@ library
         HelVM.HelMA.Automaton.Memories.RAMConst
         HelVM.HelMA.Automaton.Memories.StackConst
         HelVM.HelMA.Automaton.IO.MockIO
-        HelVM.HelMA.Automaton.IO.WrapperIO
+        HelVM.HelMA.Automaton.IO.BusinessIO
         HelVM.HelMA.Automaton.Types.CellType
         HelVM.HelMA.Automaton.Types.IntCellType
         HelVM.HelMA.Automaton.Types.StackType
@@ -91,10 +91,13 @@ library
 --    , classy-prelude       == 1.5.0
     , relude               == 1.0.0.0
 
+--    , co-log
+--    , co-log-core
     , containers           == 0.6.2.1
     , data-default
     , ilist
     , list-singleton
+--    , monad-logger
     , mtl
     , split
   mixins:
@@ -144,6 +147,7 @@ library
 --    -XDeriveLift
 --    -XStaticPointers
     -XDerivingStrategies
+    -XConstraintKinds
 --Only for lib
     -XDeriveFunctor
 --Warnings
@@ -212,6 +216,8 @@ test-suite spec
     , relude               == 1.0.0.0
 
     , helma
+--    , co-log
+--    , co-log-core
     , filepath
 
     , hspec
@@ -266,6 +272,7 @@ test-suite spec
 --    -XDeriveLift
 --    -XStaticPointers
     -XDerivingStrategies
+    -XConstraintKinds
 --Warnings
     -Wall
     -Wcompat
@@ -300,6 +307,8 @@ executable helma
     , relude               == 1.0.0.0
 
     , helma
+--    , co-log
+--    , co-log-core
     , optparse-applicative >= 0.14.3.0
     , pretty-simple
 
@@ -350,6 +359,7 @@ executable helma
 --    -XDeriveLift
 --    -XStaticPointers
     -XDerivingStrategies
+    -XConstraintKinds
 --Warnings
     -Wall
     -Wcompat
