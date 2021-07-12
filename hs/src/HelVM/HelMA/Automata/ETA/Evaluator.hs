@@ -39,7 +39,7 @@ evalTL :: Evaluator Symbol m => TokenList -> StackType -> SafeMonadT m ()
 evalTL tl ListStackType = start tl []
 evalTL tl SeqStackType  = start tl Seq.empty
 
-start :: (Stack Symbol s , Evaluator Symbol m) => TokenList -> s -> SafeMonadT m ()
+start :: SEvaluator Symbol s m => TokenList -> s -> SafeMonadT m ()
 start il = next (IU il 0)
 
 next :: SEvaluator e s m => InstructionUnit -> s -> SafeMonadT m ()
