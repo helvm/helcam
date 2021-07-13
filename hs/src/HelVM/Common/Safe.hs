@@ -4,8 +4,9 @@ module HelVM.Common.Safe (
   exceptTToIO,
   userErrorText,
 
-  liftError,
+  liftExceptT,
   liftSafe,
+  liftError,
 
   safeFailToFail,
   safeToFail,
@@ -40,7 +41,8 @@ module HelVM.Common.Safe (
 ) where
 
 import Control.Exception.Base
-import Control.Monad.Except hiding (runExceptT)
+import Control.Monad.Except hiding (ExceptT , runExceptT)
+
 import System.IO.Error
 
 safeIOToIO :: IO (Safe a) -> IO a
@@ -56,13 +58,16 @@ userErrorText :: Text -> IOException
 userErrorText = userError . toString
 
 ----
-
-liftError :: MonadSafeError m => Text -> m a
-liftError = throwError
+liftExceptT :: MonadError e m => ExceptT e m a -> m a
+liftExceptT m = liftEither =<< runExceptT m
 
 liftSafe :: MonadSafeError m => Safe a -> m a
 liftSafe = liftEither
 
+liftError :: MonadSafeError m => Text -> m a
+liftError = throwError
+
+----
 safeFailToFail ::  MonadFail m => SafeFail m a -> m a
 safeFailToFail m = safeToFail =<< m
 
