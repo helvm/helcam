@@ -2,7 +2,6 @@ module HelVM.Common.SafeExceptT (
   hoistSafe,
   hoistMonad,
   hoistError,
-  safeMonadToFail,
   unsafeRunExceptT,
 ) where
 
@@ -22,9 +21,6 @@ hoistError = hoistSafe . safeError
 --hoistError = throwE
 
 ----
-
-safeMonadToFail :: MonadFail m => SafeExceptT m a -> m a
-safeMonadToFail m = safeToFail =<< runExceptT m
 
 unsafeRunExceptT :: Monad m => SafeExceptT m a -> m a
 unsafeRunExceptT = fmap unsafe . runExceptT

@@ -8,10 +8,6 @@ module HelVM.Common.Safe (
   liftSafe,
   liftError,
 
-  safeFailToFail,
-  safeToFail,
-  safeLegacyToFail,
-
   safe,
   safeLegacyToSafe,
   safeToSafeLegacy,
@@ -35,7 +31,6 @@ module HelVM.Common.Safe (
 
   MonadSafeError,
   SafeExceptT,
-  SafeFail,
   Safe,
   Error,
 ) where
@@ -66,17 +61,6 @@ liftSafe = liftEither
 
 liftError :: MonadSafeError m => Text -> m a
 liftError = throwError
-
-----
-safeFailToFail ::  MonadFail m => SafeFail m a -> m a
-safeFailToFail m = safeToFail =<< m
-
-safeToFail ::  MonadFail m => Safe a -> m a
-safeToFail = safeLegacyToFail . safeToSafeLegacy
-
-safeLegacyToFail :: MonadFail m => SafeLegacy a -> m a
-safeLegacyToFail (Right a) = pure a
-safeLegacyToFail (Left a)  = fail a
 
 -- Create Safe
 
@@ -143,8 +127,6 @@ unsafe (Left a) = error a
 type MonadSafeError m = MonadError Error m
 
 type SafeExceptT m = ExceptT Error m
-
-type SafeFail m a = m (Safe a)
 
 type SafeLegacy = Either String
 
