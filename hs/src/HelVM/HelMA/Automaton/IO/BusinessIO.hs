@@ -66,7 +66,7 @@ instance BusinessIO IO where
   wFlush    = IO.hFlush stdout
   wLogStr   = IO.hPutStr stderr . toString
 
-instance BusinessIO (ExceptT Error IO) where
+instance BusinessIO (SafeMonadT IO) where
   wGetChar  = hoistMonad   IO.getChar
   wPutChar  = hoistMonad . IO.putChar
   wGetLine  = hoistMonad   getLine

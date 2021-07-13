@@ -40,4 +40,4 @@ unsafeRunExceptT = fmap unsafe . runExceptT
 
 ----
 
-type SafeMonadT m a = ExceptT Error m a
+type SafeMonadT m = ExceptT Error m
