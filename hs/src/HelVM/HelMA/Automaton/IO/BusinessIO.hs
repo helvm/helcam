@@ -1,4 +1,3 @@
---{-# LANGUAGE UndecidableInstances #-}
 module HelVM.HelMA.Automaton.IO.BusinessIO (
   SREvaluator,
   REvaluator,
@@ -74,12 +73,3 @@ instance BusinessIO (SafeMonadT IO) where
   wPutStrLn = hoistMonad . putTextLn
   wFlush    = hoistMonad $ hFlush stdout
   wLogStr   = hoistMonad . IO.hPutStr stderr . toString
-
---instance (Monad m , MonadIO m) => BusinessIO m where
---  wGetChar  = liftIO $ IO.getChar
---  wPutChar  = liftIO . IO.putChar
---  wGetLine  = getLine
---  wPutStr   = putText
---  wPutStrLn = putTextLn
---  wFlush    = liftIO $ IO.hFlush stdout
---  wLogStr   = liftIO . IO.hPutStr stderr . toString
