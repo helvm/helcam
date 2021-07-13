@@ -10,8 +10,8 @@ module HelVM.Common.Safe (
   liftError,
 
   safe,
-  safeLegacyToSafe,
-  safeToSafeLegacy,
+  legacySafeToSafe,
+  safeToLegacySafe,
 
   maybeToSafeOrErrorTupleList,
   maybeToSafeOrErrorTuple,
@@ -72,11 +72,11 @@ liftError = throwError
 safe :: a -> Safe a
 safe = pure
 
-safeLegacyToSafe :: SafeLegacy a -> Safe a
-safeLegacyToSafe = first toText
+legacySafeToSafe :: LegacySafe a -> Safe a
+legacySafeToSafe = first toText
 
-safeToSafeLegacy :: Safe a -> SafeLegacy a
-safeToSafeLegacy = first toString
+safeToLegacySafe :: Safe a -> LegacySafe a
+safeToLegacySafe = first toString
 
 ---- Create from Maybe
 
@@ -133,7 +133,7 @@ type MonadSafeError m = MonadError Error m
 
 type SafeExceptT m = ExceptT Error m
 
-type SafeLegacy = Either String
+type LegacySafe = Either String
 
 type Safe = Either Error
 
