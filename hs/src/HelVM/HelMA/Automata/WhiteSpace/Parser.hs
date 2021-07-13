@@ -76,4 +76,4 @@ parseTL tl ascii = parseTL' tl where
   parseTL' tl'           = panic (show tl') []
 
 panic :: Text -> TokenList -> Safe InstructionList
-panic token tl = safeErrorTupleList [("Unrecognised" , token) , ("Rest" , show tl)] 
+panic token tl = liftErrorTupleList [("Unrecognised" , token) , ("Rest" , show tl)]

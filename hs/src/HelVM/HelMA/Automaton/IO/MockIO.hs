@@ -46,12 +46,12 @@ instance BusinessIO MockIO where
   wLogStr  = mockLogStr
 
 instance BusinessIO (SafeExceptT MockIO) where
-  wGetChar = hoistMonad   mockGetChar
-  wGetLine = hoistMonad   mockGetLine
-  wPutChar = hoistMonad . mockPutChar
-  wPutInt  = hoistMonad . mockPutInt
-  wPutStr  = hoistMonad . mockPutStr
-  wLogStr  = hoistMonad . mockLogStr
+  wGetChar = safeExceptT   mockGetChar
+  wGetLine = safeExceptT   mockGetLine
+  wPutChar = safeExceptT . mockPutChar
+  wPutInt  = safeExceptT . mockPutInt
+  wPutStr  = safeExceptT . mockPutStr
+  wLogStr  = safeExceptT . mockLogStr
 
 mockGetChar :: MockIO Char
 mockGetChar = mockGetChar' =<< get where

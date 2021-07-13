@@ -38,37 +38,37 @@ type BIO m = (MonadSafeError m , BusinessIO m)
 
 class Monad m => BusinessIO m where
   wGetChar     :: m Char
-  wPutChar     :: Char -> m ()
   wGetLine     :: m Text
+  wPutIntegral :: Integral v => v -> m ()
+  wPutInt      :: Int -> m ()
+  wPutChar     :: Char -> m ()
   wPutStr      :: Text -> m ()
   wPutStrLn    :: Text -> m ()
-  wFlush       :: m ()
-  wPutInt      :: Int -> m ()
-  wPutIntegral :: Integral v => v -> m ()
   wLogStr      :: Text -> m ()
   wLogStrLn    :: Text -> m ()
   wLogShow     :: Show s => s -> m ()
-  wPutStrLn s  = wPutStr $ s <> "\n"
-  wFlush       = pass
-  wPutInt      = wPutChar . chr
+  wFlush       :: m ()
   wPutIntegral = wPutInt . fromIntegral
+  wPutInt      = wPutChar . chr
+  wPutStrLn s  = wPutStr $ s <> "\n"
   wLogStrLn s  = wLogStr $ s <> "\n"
   wLogShow     = wLogStrLn . show
+  wFlush       = pass
 
 instance BusinessIO IO where
   wGetChar  = IO.getChar
-  wPutChar  = IO.putChar
   wGetLine  = getLine
+  wPutChar  = IO.putChar
   wPutStr   = putText
   wPutStrLn = putTextLn
-  wFlush    = hFlush stdout
   wLogStr   = IO.hPutStr stderr . toString
+  wFlush    = hFlush stdout
 
 instance BusinessIO (SafeExceptT IO) where
-  wGetChar  = hoistMonad   IO.getChar
-  wPutChar  = hoistMonad . IO.putChar
-  wGetLine  = hoistMonad   getLine
-  wPutStr   = hoistMonad . putText
-  wPutStrLn = hoistMonad . putTextLn
-  wFlush    = hoistMonad $ hFlush stdout
-  wLogStr   = hoistMonad . IO.hPutStr stderr . toString
+  wGetChar  = safeExceptT   IO.getChar
+  wGetLine  = safeExceptT   getLine
+  wPutChar  = safeExceptT . IO.putChar
+  wPutStr   = safeExceptT . putText
+  wPutStrLn = safeExceptT . putTextLn
+  wLogStr   = safeExceptT . IO.hPutStr stderr . toString
+  wFlush    = safeExceptT $ hFlush stdout
