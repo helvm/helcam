@@ -16,8 +16,6 @@ import HelVM.HelMA.Automaton.IO.BusinessIO
 import HelVM.HelMA.Automaton.Memories.RAMConst as RAM
 import HelVM.HelMA.Automaton.Types.RAMType
 
-import HelVM.Common.SafeMonadT
-
 import qualified Data.Sequence as Seq
 
 simpleEval :: Evaluator Symbol m => Source -> m ()
@@ -26,8 +24,8 @@ simpleEval source = eval source defaultRAMType
 simpleEvalIL :: Evaluator Symbol m => SymbolList -> m ()
 simpleEvalIL il = evalIL il defaultRAMType
 
-evalParams :: Evaluator Symbol m => EvalParams -> SafeMonadT m ()
-evalParams p = hoistMonad $ eval (source p) (ram $ typeOptions p)
+evalParams :: (Evaluator Symbol m) => EvalParams -> m ()
+evalParams p = eval (source p) (ram $ typeOptions p)
 
 eval :: Evaluator Symbol m => Source -> RAMType -> m ()
 eval source = evalIL $ tokenize source

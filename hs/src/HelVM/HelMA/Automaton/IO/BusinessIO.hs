@@ -1,9 +1,11 @@
+{-# LANGUAGE UndecidableInstances #-}
 module HelVM.HelMA.Automaton.IO.BusinessIO (
   SREvaluator,
   REvaluator,
   SEvaluator,
   Evaluator,
   Element,
+  BIO,
   BusinessIO,
   wGetChar,
   wPutChar,
@@ -18,6 +20,9 @@ module HelVM.HelMA.Automaton.IO.BusinessIO (
   wLogShow,
 ) where
 
+import HelVM.Common.Safe
+import HelVM.Common.SafeMonadT
+
 import HelVM.HelMA.Automaton.Memories.RAMConst   as RAM
 import HelVM.HelMA.Automaton.Memories.StackConst as Stack
   
@@ -30,6 +35,8 @@ type REvaluator e r m = (RAM e r , Evaluator e m)
 type SEvaluator e s m = (Stack e s , Evaluator e m)
 type Evaluator e m = (Element e , BusinessIO m)
 type Element e  = (Default e , Read e , Show e , Integral e)
+
+type BIO m = (MonadSafeError m , BusinessIO m)
 
 class Monad m => BusinessIO m where
   wGetChar     :: m Char
@@ -59,7 +66,16 @@ instance BusinessIO IO where
   wFlush    = IO.hFlush stdout
   wLogStr   = IO.hPutStr stderr . toString
 
---instance (Monad m , MonadIO m) => BIO m where
+instance BusinessIO (ExceptT Error IO) where
+  wGetChar  = hoistMonad $ IO.getChar
+  wPutChar  = hoistMonad . IO.putChar
+  wGetLine  = hoistMonad $ getLine
+  wPutStr   = hoistMonad . putText
+  wPutStrLn = hoistMonad . putTextLn
+  wFlush    = hoistMonad $ IO.hFlush stdout
+  wLogStr   = hoistMonad . IO.hPutStr stderr . toString
+
+--instance (Monad m , MonadIO m) => BusinessIO m where
 --  wGetChar  = liftIO $ IO.getChar
 --  wPutChar  = liftIO . IO.putChar
 --  wGetLine  = getLine
@@ -67,3 +83,4 @@ instance BusinessIO IO where
 --  wPutStrLn = putTextLn
 --  wFlush    = liftIO $ IO.hFlush stdout
 --  wLogStr   = liftIO . IO.hPutStr stderr . toString
+

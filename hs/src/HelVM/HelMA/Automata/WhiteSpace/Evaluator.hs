@@ -44,8 +44,8 @@ simpleEval (tokenType , source , asciiLabel , stackType , ramType) = eval tokenT
 simpleEvalTL :: Evaluator Symbol m => TokenList -> SafeMonadT m ()
 simpleEvalTL tl = evalTL tl False defaultStackType defaultRAMType
 
-evalParams :: Evaluator Symbol m => TokenType -> EvalParams -> SafeMonadT m ()
-evalParams tokenType p = eval tokenType (source p) (asciiLabel p) (stack $ typeOptions p) (ram $ typeOptions p)
+evalParams :: (BIO m , Evaluator Symbol m) => TokenType -> EvalParams -> m ()
+evalParams tokenType p = liftMonad $ eval tokenType (source p) (asciiLabel p) (stack $ typeOptions p) (ram $ typeOptions p)
 
 eval :: Evaluator Symbol m => TokenType -> Source -> Bool -> StackType -> RAMType -> SafeMonadT m ()
 eval tokenType source = evalTL $ tokenize tokenType source

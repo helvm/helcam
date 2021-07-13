@@ -8,7 +8,8 @@ import HelVM.HelMA.Automaton.API.TypeOptions
 
 import HelVM.HelMA.Automaton.IO.BusinessIO
 
-import HelVM.Common.SafeMonadT
+import HelVM.Common.Safe
+--import HelVM.Common.SafeMonadT
 
 import HelVM.HelMA.Automaton.Types.CellType
 import HelVM.HelMA.Automaton.Types.IntCellType
@@ -83,10 +84,10 @@ parse WS   a = pPrintNoColor . flip (WS.parse WhiteTokenType) a
 parse lang _ = tokenize lang
 
 eval :: TypeOptions -> AsciiLabels -> Lang -> Source -> IO ()
-eval options a lang s = safeMonadToFail $ evalParams lang params
+eval options a lang s = exceptTToIO $ evalParams lang params
   where params = EvalParams {asciiLabel = a , source = s , typeOptions = options}
 
-evalParams :: BusinessIO m => Lang -> EvalParams -> SafeMonadT m ()
+evalParams :: BIO m => Lang -> EvalParams -> m ()
 evalParams Cat = Cat.evalParams
 evalParams Rev = Rev.evalParams
 evalParams BF  = BF.evalParams

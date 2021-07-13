@@ -16,15 +16,13 @@ import HelVM.HelMA.Automaton.API.TypeOptions
 import HelVM.HelMA.Automaton.IO.BusinessIO
 import HelVM.HelMA.Automaton.Types.CellType
 
-import HelVM.Common.SafeMonadT
-
 uncurryEval :: BusinessIO m => (Source , CellType) -> m ()
 uncurryEval = uncurry eval
 
 ----
 
-evalParams :: BusinessIO m => EvalParams -> SafeMonadT m ()
-evalParams p = hoistMonad $ eval (source p) (cell $ typeOptions p)
+evalParams :: BIO m => EvalParams -> m ()
+evalParams p = eval (source p) (cell $ typeOptions p)
 
 eval :: BusinessIO m => Source -> CellType -> m ()
 eval source Int8Type   = start source (newTape :: FullTape Int8)

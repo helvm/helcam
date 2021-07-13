@@ -29,8 +29,8 @@ uncurryEval = uncurry eval
 
 ----
 
-evalParams :: Evaluator Symbol m => EvalParams -> SafeMonadT m ()
-evalParams p = eval (source p) (stack $ typeOptions p)
+evalParams :: (BIO m , Evaluator Symbol m) => EvalParams -> m ()
+evalParams p = liftMonad $ eval (source p) (stack $ typeOptions p)
 
 eval :: Evaluator Symbol m => Source -> StackType -> SafeMonadT m ()
 eval source = evalTL $ tokenize source
