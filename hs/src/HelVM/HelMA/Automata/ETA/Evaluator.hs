@@ -34,14 +34,14 @@ evalParams :: (BIO m , Evaluator Symbol m) => EvalParams -> m ()
 evalParams p = eval (source p) (stack $ typeOptions p)
 
 eval :: (BIO m , Evaluator Symbol m) => Source -> StackType -> m ()
-eval source stackType = liftExceptT $ evalTL (tokenize source) stackType
+eval source stackType = evalTL (tokenize source) stackType
 
-evalTL :: Evaluator Symbol m => TokenList -> StackType -> SafeExceptT m ()
+evalTL ::  (BIO m , Evaluator Symbol m) => TokenList -> StackType -> m ()
 evalTL tl ListStackType = start tl []
 evalTL tl SeqStackType  = start tl Seq.empty
 
-start :: SEvaluator Symbol s m => TokenList -> s -> SafeExceptT m ()
-start il = next (IU il 0)
+start :: (BIO m , SEvaluator Symbol s m) => TokenList -> s -> m ()
+start il s = liftExceptT $ next (IU il 0) s
 
 next :: SEvaluator e s m => InstructionUnit -> s -> SafeExceptT m ()
 next iu s = doInstruction' =<< hoistSafe (nextIU iu)  where doInstruction' (t , iu') = doInstruction t iu' s
