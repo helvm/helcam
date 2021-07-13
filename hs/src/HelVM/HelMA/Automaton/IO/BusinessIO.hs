@@ -66,10 +66,10 @@ instance BusinessIO IO where
   wLogStr   = IO.hPutStr stderr . toString
 
 instance BusinessIO (SafeExceptT IO) where
-  wGetChar  = liftMonad   IO.getChar
-  wPutChar  = liftMonad . IO.putChar
-  wGetLine  = liftMonad   getLine
-  wPutStr   = liftMonad . putText
-  wPutStrLn = liftMonad . putTextLn
-  wFlush    = liftMonad $ hFlush stdout
-  wLogStr   = liftMonad . IO.hPutStr stderr . toString
+  wGetChar  = hoistMonad   IO.getChar
+  wPutChar  = hoistMonad . IO.putChar
+  wGetLine  = hoistMonad   getLine
+  wPutStr   = hoistMonad . putText
+  wPutStrLn = hoistMonad . putTextLn
+  wFlush    = hoistMonad $ hFlush stdout
+  wLogStr   = hoistMonad . IO.hPutStr stderr . toString

@@ -117,22 +117,22 @@ doInstruction i   iu _ _ = hoistError $ "Can't do " <> show i <> " " <> show iu
 -- IO instructions
 doOutputChar :: SREvaluator e s r m => InstructionUnit -> s -> r -> SafeExceptT m ()
 doOutputChar iu s r = doOutputChar' =<< hoistSafe (pop1 s) where
-  doOutputChar' (e , s') = liftMonad (wPutChar $ genericChr e) *> next iu s' r
+  doOutputChar' (e , s') = hoistMonad (wPutChar $ genericChr e) *> next iu s' r
 
 doInputChar :: SREvaluator e s r m => InstructionUnit -> s -> r -> SafeExceptT m ()
 doInputChar iu s r = doInputChar' =<< hoistSafe (pop1 s) where
-  doInputChar' (address , s') = doInputChar'' =<< liftMonad wGetChar where
+  doInputChar' (address , s') = doInputChar'' =<< hoistMonad wGetChar where
     doInputChar'' char = next iu s' $ storeChar address char r
 
 doOutputNum :: SREvaluator e s r m => InstructionUnit -> s -> r -> SafeExceptT m ()
 doOutputNum iu s r = doOutputNum' =<< hoistSafe (pop1 s) where
-  doOutputNum' (e , s') = liftMonad (wPutStr $ show e) *> next iu s' r
+  doOutputNum' (e , s') = hoistMonad (wPutStr $ show e) *> next iu s' r
 
 doInputNum :: SREvaluator e s r m => InstructionUnit -> s -> r -> SafeExceptT m ()
 doInputNum iu s r = doInputNum' =<< hoistSafe (pop1 s) where
-  doInputNum' (address , s') = doInputNum'' =<< liftMonad wGetLine where
+  doInputNum' (address , s') = doInputNum'' =<< hoistMonad wGetLine where
     doInputNum'' line = next iu s' =<< hoistSafe (storeNum address line r)
 
 -- Terminate instruction
 doEnd :: SREvaluator e s r m => InstructionUnit -> s -> r -> SafeExceptT m ()
-doEnd iu s _ = liftMonad (wLogStrLn (show s) *> wLogStrLn (show iu))
+doEnd iu s _ = hoistMonad (wLogStrLn (show s) *> wLogStrLn (show iu))

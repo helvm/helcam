@@ -1,7 +1,7 @@
 module HelVM.Common.SafeExceptT (
   liftExceptT,
   hoistSafe,
-  liftMonad,
+  hoistMonad,
   hoistError,
   safeMonadToFail,
   unsafeRunExceptT,
@@ -16,8 +16,8 @@ liftExceptT m = liftEither =<< runExceptT m
 
 --import Control.Monad.Except
 
-liftMonad :: Monad m => m a -> SafeExceptT m a
-liftMonad a = ExceptT $ safe <$> a
+hoistMonad :: Monad m => m a -> SafeExceptT m a
+hoistMonad a = ExceptT $ safe <$> a
 
 --except :: Monad m => Either e a -> ExceptT e m a
 hoistSafe :: Monad m => Safe a -> SafeExceptT m a
