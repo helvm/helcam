@@ -31,7 +31,7 @@ uncurryEval = uncurry eval
 ----
 
 evalParams :: (BIO m , Evaluator Symbol m) => EvalParams -> m ()
-evalParams p = liftMonad $ eval (source p) (stack $ typeOptions p)
+evalParams p = liftExceptT $ eval (source p) (stack $ typeOptions p)
 
 eval :: Evaluator Symbol m => Source -> StackType -> SafeExceptT m ()
 eval source = evalTL $ tokenize source
@@ -71,12 +71,12 @@ doInstruction Nothing iu s = doEnd iu s
 -- IO instructions
 doOutputChar :: SEvaluator e s m => InstructionUnit -> s -> SafeExceptT m ()
 doOutputChar iu s = doOutputChar' =<< hoistSafe (pop1 s) where
-  doOutputChar' (e , s') = hoistMonad (wPutChar (genericChr e)) *> next iu s'
+  doOutputChar' (e , s') = liftMonad (wPutChar (genericChr e)) *> next iu s'
 
 doInputChar :: SEvaluator e s m => InstructionUnit -> s -> SafeExceptT m ()
-doInputChar iu s = doInputChar' =<< hoistMonad wGetChar where
+doInputChar iu s = doInputChar' =<< liftMonad wGetChar where
   doInputChar' char = next iu $ charPush1 char s
 
 -- Terminate instruction
 doEnd :: SEvaluator e s m => InstructionUnit -> s -> SafeExceptT m ()
-doEnd iu s = hoistMonad (wLogShow iu *> wLogShow s)
+doEnd iu s = liftMonad (wLogShow iu *> wLogShow s)
