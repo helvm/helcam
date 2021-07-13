@@ -20,7 +20,6 @@ module HelVM.HelMA.Automaton.IO.BusinessIO (
 ) where
 
 import HelVM.Common.Safe
-import HelVM.Common.SafeExceptT
 
 import HelVM.HelMA.Automaton.Memories.RAMConst   as RAM
 import HelVM.HelMA.Automaton.Memories.StackConst as Stack
