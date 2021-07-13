@@ -20,7 +20,7 @@ module HelVM.HelMA.Automaton.IO.BusinessIO (
 ) where
 
 import HelVM.Common.Safe
-import HelVM.Common.SafeMonadT
+import HelVM.Common.SafeExceptT
 
 import HelVM.HelMA.Automaton.Memories.RAMConst   as RAM
 import HelVM.HelMA.Automaton.Memories.StackConst as Stack
@@ -65,7 +65,7 @@ instance BusinessIO IO where
   wFlush    = hFlush stdout
   wLogStr   = IO.hPutStr stderr . toString
 
-instance BusinessIO (SafeMonadT IO) where
+instance BusinessIO (SafeExceptT IO) where
   wGetChar  = hoistMonad   IO.getChar
   wPutChar  = hoistMonad . IO.putChar
   wGetLine  = hoistMonad   getLine

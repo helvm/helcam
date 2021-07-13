@@ -13,7 +13,7 @@ import HelVM.HelMA.Automaton.Types.RAMType
 import HelVM.HelMA.Automaton.Types.StackType
 import HelVM.HelMA.Automaton.Types.TokenType
 
-import HelVM.Common.SafeMonadT
+import HelVM.Common.SafeExceptT
 
 import System.FilePath.Posix
 

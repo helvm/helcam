@@ -126,13 +126,13 @@ unsafe (Left a) = error a
 
 type MonadSafeError m = MonadError Error m
 
-type SafeExceptT m a = ExceptT Error m a
+type SafeExceptT m = ExceptT Error m
 
 type SafeFail m a = m (Safe a)
 
-type SafeLegacy a = Either String a
+type SafeLegacy = Either String
 
-type Safe a = Either Error a
+type Safe = Either Error
 
 type ErrorTuple = (Error , Error)
 

@@ -17,14 +17,15 @@ import HelVM.HelMA.Automaton.IO.BusinessIO
 import HelVM.HelMA.Automaton.Memories.StackConst as Stack
 import HelVM.HelMA.Automaton.Types.StackType
 
+import HelVM.Common.Safe
+import HelVM.Common.SafeExceptT
 import HelVM.Common.Util
-import HelVM.Common.SafeMonadT
 
 import Prelude hiding (divMod)
 
 import qualified Data.Sequence as Seq
 
-uncurryEval :: Evaluator Symbol m => (Source , StackType) -> SafeMonadT m ()
+uncurryEval :: Evaluator Symbol m => (Source , StackType) -> SafeExceptT m ()
 uncurryEval = uncurry eval
 
 ----
@@ -32,20 +33,20 @@ uncurryEval = uncurry eval
 evalParams :: (BIO m , Evaluator Symbol m) => EvalParams -> m ()
 evalParams p = liftMonad $ eval (source p) (stack $ typeOptions p)
 
-eval :: Evaluator Symbol m => Source -> StackType -> SafeMonadT m ()
+eval :: Evaluator Symbol m => Source -> StackType -> SafeExceptT m ()
 eval source = evalTL $ tokenize source
 
-evalTL :: Evaluator Symbol m => TokenList -> StackType -> SafeMonadT m ()
+evalTL :: Evaluator Symbol m => TokenList -> StackType -> SafeExceptT m ()
 evalTL tl ListStackType = start tl []
 evalTL tl SeqStackType  = start tl Seq.empty
 
-start :: SEvaluator Symbol s m => TokenList -> s -> SafeMonadT m ()
+start :: SEvaluator Symbol s m => TokenList -> s -> SafeExceptT m ()
 start il = next (IU il 0)
 
-next :: SEvaluator e s m => InstructionUnit -> s -> SafeMonadT m ()
+next :: SEvaluator e s m => InstructionUnit -> s -> SafeExceptT m ()
 next iu s = doInstruction' =<< hoistSafe (nextIU iu)  where doInstruction' (t , iu') = doInstruction t iu' s
 
-doInstruction :: SEvaluator e s m => Maybe Token -> InstructionUnit -> s -> SafeMonadT m ()
+doInstruction :: SEvaluator e s m => Maybe Token -> InstructionUnit -> s -> SafeExceptT m ()
 -- IO instructions
 doInstruction (Just O) iu s = doOutputChar iu s
 doInstruction (Just I) iu s = doInputChar  iu s
@@ -68,14 +69,14 @@ doInstruction (Just T) iu@(IU il _ ) s = transfer =<< hoistSafe (pop2 s) where
 doInstruction Nothing iu s = doEnd iu s
 
 -- IO instructions
-doOutputChar :: SEvaluator e s m => InstructionUnit -> s -> SafeMonadT m ()
+doOutputChar :: SEvaluator e s m => InstructionUnit -> s -> SafeExceptT m ()
 doOutputChar iu s = doOutputChar' =<< hoistSafe (pop1 s) where
   doOutputChar' (e , s') = hoistMonad (wPutChar (genericChr e)) *> next iu s'
 
-doInputChar :: SEvaluator e s m => InstructionUnit -> s -> SafeMonadT m ()
+doInputChar :: SEvaluator e s m => InstructionUnit -> s -> SafeExceptT m ()
 doInputChar iu s = doInputChar' =<< hoistMonad wGetChar where
   doInputChar' char = next iu $ charPush1 char s
 
 -- Terminate instruction
-doEnd :: SEvaluator e s m => InstructionUnit -> s -> SafeMonadT m ()
+doEnd :: SEvaluator e s m => InstructionUnit -> s -> SafeExceptT m ()
 doEnd iu s = hoistMonad (wLogShow iu *> wLogShow s)

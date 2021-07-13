@@ -25,7 +25,8 @@ import HelVM.HelMA.Automaton.IO.BusinessIO
 import HelVM.HelMA.Automaton.Memories.RAMConst   as RAM
 import HelVM.HelMA.Automaton.Memories.StackConst as Stack
 
-import HelVM.Common.SafeMonadT
+import HelVM.Common.Safe
+import HelVM.Common.SafeExceptT
 
 import HelVM.HelMA.Automaton.Types.RAMType
 import HelVM.HelMA.Automaton.Types.StackType
@@ -38,45 +39,45 @@ import Prelude hiding (swap)
 import qualified Data.IntMap   as IntMap
 import qualified Data.Sequence as Seq
 
-simpleEval :: Evaluator Symbol m => (TokenType , Source , Bool , StackType , RAMType) -> SafeMonadT m ()
+simpleEval :: Evaluator Symbol m => (TokenType , Source , Bool , StackType , RAMType) -> SafeExceptT m ()
 simpleEval (tokenType , source , asciiLabel , stackType , ramType) = eval tokenType source asciiLabel stackType ramType
 
-simpleEvalTL :: Evaluator Symbol m => TokenList -> SafeMonadT m ()
+simpleEvalTL :: Evaluator Symbol m => TokenList -> SafeExceptT m ()
 simpleEvalTL tl = evalTL tl False defaultStackType defaultRAMType
 
 evalParams :: (BIO m , Evaluator Symbol m) => TokenType -> EvalParams -> m ()
 evalParams tokenType p = liftMonad $ eval tokenType (source p) (asciiLabel p) (stack $ typeOptions p) (ram $ typeOptions p)
 
-eval :: Evaluator Symbol m => TokenType -> Source -> Bool -> StackType -> RAMType -> SafeMonadT m ()
+eval :: Evaluator Symbol m => TokenType -> Source -> Bool -> StackType -> RAMType -> SafeExceptT m ()
 eval tokenType source = evalTL $ tokenize tokenType source
 
-evalTL :: Evaluator Symbol m => TokenList -> Bool -> StackType -> RAMType -> SafeMonadT m ()
+evalTL :: Evaluator Symbol m => TokenList -> Bool -> StackType -> RAMType -> SafeExceptT m ()
 evalTL tl ascii st rt = evalTL' =<< hoistSafe (parseTL tl ascii) where evalTL' il = evalIL il st rt
 
-evalIL :: Evaluator Symbol m => InstructionList -> StackType -> RAMType -> SafeMonadT m ()
+evalIL :: Evaluator Symbol m => InstructionList -> StackType -> RAMType -> SafeExceptT m ()
 evalIL il s ListRAMType   = evalIL' il s []
 evalIL il s SeqRAMType    = evalIL' il s Seq.empty
 evalIL il s IntMapRAMType = evalIL' il s IntMap.empty
 
-evalIL' :: REvaluator Symbol r m => InstructionList -> StackType -> r -> SafeMonadT m ()
+evalIL' :: REvaluator Symbol r m => InstructionList -> StackType -> r -> SafeExceptT m ()
 evalIL' il ListStackType = start il []
 evalIL' il SeqStackType  = start il Seq.empty
 
-start :: SREvaluator Symbol s r m  => InstructionList -> s -> r -> SafeMonadT m ()
+start :: SREvaluator Symbol s r m  => InstructionList -> s -> r -> SafeExceptT m ()
 start il = next (IU il 0 (IS []))
 
-next :: SREvaluator e s r m => InstructionUnit -> s -> r -> SafeMonadT m ()
+next :: SREvaluator e s r m => InstructionUnit -> s -> r -> SafeExceptT m ()
 next (IU il ic is) s r = doInstruction' =<< hoistSafe (indexSafe il ic) where doInstruction' i = doInstruction i (IU il (ic+1) is) s r
 
-stackNext :: SREvaluator e s r m => InstructionUnit -> r -> s -> SafeMonadT m ()
+stackNext :: SREvaluator e s r m => InstructionUnit -> r -> s -> SafeExceptT m ()
 stackNext ic r s = next ic s r
 
-iuNext :: SREvaluator e s r m => s -> r -> InstructionUnit -> SafeMonadT m ()
+iuNext :: SREvaluator e s r m => s -> r -> InstructionUnit -> SafeExceptT m ()
 iuNext s r ic = next ic s r
 
 ----
 
-doInstruction :: SREvaluator e s r m => Instruction -> InstructionUnit -> s -> r -> SafeMonadT m ()
+doInstruction :: SREvaluator e s r m => Instruction -> InstructionUnit -> s -> r -> SafeExceptT m ()
 
 -- IO instructions
 doInstruction  OutputChar iu s r = doOutputChar iu s r
@@ -114,24 +115,24 @@ doInstruction End iu s r = doEnd iu s r
 doInstruction i   iu _ _ = hoistError $ "Can't do " <> show i <> " " <> show iu
 
 -- IO instructions
-doOutputChar :: SREvaluator e s r m => InstructionUnit -> s -> r -> SafeMonadT m ()
+doOutputChar :: SREvaluator e s r m => InstructionUnit -> s -> r -> SafeExceptT m ()
 doOutputChar iu s r = doOutputChar' =<< hoistSafe (pop1 s) where
   doOutputChar' (e , s') = hoistMonad (wPutChar $ genericChr e) *> next iu s' r
 
-doInputChar :: SREvaluator e s r m => InstructionUnit -> s -> r -> SafeMonadT m ()
+doInputChar :: SREvaluator e s r m => InstructionUnit -> s -> r -> SafeExceptT m ()
 doInputChar iu s r = doInputChar' =<< hoistSafe (pop1 s) where
   doInputChar' (address , s') = doInputChar'' =<< hoistMonad wGetChar where
     doInputChar'' char = next iu s' $ storeChar address char r
 
-doOutputNum :: SREvaluator e s r m => InstructionUnit -> s -> r -> SafeMonadT m ()
+doOutputNum :: SREvaluator e s r m => InstructionUnit -> s -> r -> SafeExceptT m ()
 doOutputNum iu s r = doOutputNum' =<< hoistSafe (pop1 s) where
   doOutputNum' (e , s') = hoistMonad (wPutStr $ show e) *> next iu s' r
 
-doInputNum :: SREvaluator e s r m => InstructionUnit -> s -> r -> SafeMonadT m ()
+doInputNum :: SREvaluator e s r m => InstructionUnit -> s -> r -> SafeExceptT m ()
 doInputNum iu s r = doInputNum' =<< hoistSafe (pop1 s) where
   doInputNum' (address , s') = doInputNum'' =<< hoistMonad wGetLine where
     doInputNum'' line = next iu s' =<< hoistSafe (storeNum address line r)
 
 -- Terminate instruction
-doEnd :: SREvaluator e s r m => InstructionUnit -> s -> r -> SafeMonadT m ()
+doEnd :: SREvaluator e s r m => InstructionUnit -> s -> r -> SafeExceptT m ()
 doEnd iu s _ = hoistMonad (wLogStrLn (show s) *> wLogStrLn (show iu))

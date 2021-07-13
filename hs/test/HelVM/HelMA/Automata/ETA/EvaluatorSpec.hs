@@ -9,7 +9,7 @@ import HelVM.WrappedGoldenIO
 import HelVM.HelMA.Automaton.IO.MockIO
 import HelVM.HelMA.Automaton.Types.StackType
 
-import HelVM.Common.SafeMonadT
+import HelVM.Common.SafeExceptT
 
 import System.FilePath.Posix
 
