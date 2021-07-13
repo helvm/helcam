@@ -63,7 +63,7 @@ instance BusinessIO IO where
   wGetLine  = getLine
   wPutStr   = putText
   wPutStrLn = putTextLn
-  wFlush    = IO.hFlush stdout
+  wFlush    = hFlush stdout
   wLogStr   = IO.hPutStr stderr . toString
 
 instance BusinessIO (SafeMonadT IO) where
@@ -72,7 +72,7 @@ instance BusinessIO (SafeMonadT IO) where
   wGetLine  = hoistMonad   getLine
   wPutStr   = hoistMonad . putText
   wPutStrLn = hoistMonad . putTextLn
-  wFlush    = hoistMonad $ IO.hFlush stdout
+  wFlush    = hoistMonad $ hFlush stdout
   wLogStr   = hoistMonad . IO.hPutStr stderr . toString
 
 --instance (Monad m , MonadIO m) => BusinessIO m where
