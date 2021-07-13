@@ -48,7 +48,7 @@ main = runApp =<< execParser opts where
 
 runApp:: AppOptions -> IO ()
 runApp AppOptions{lang , minified , emitTL , emitIL , asciiLabels , ramType , stackType , cellType , intCellType , exec , file} = do
-  IO.hSetBuffering stdout IO.NoBuffering
+  hSetBuffering stdout IO.NoBuffering
   source <- readSource exec file
   run minified emitTL emitIL typeOptions asciiLabels (parseLang lang) source
     where typeOptions = TypeOptions (parseRAMType ramType) (parseStackType stackType) (parseCellType cellType) (parseIntCellType intCellType)

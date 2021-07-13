@@ -13,7 +13,7 @@ import HelVM.Common.Safe
 import Control.Monad.Except hiding (ExceptT , runExceptT)
 
 liftMonad :: MonadError e m => ExceptT e m a -> m a
-liftMonad m = join $ liftEither <$> runExceptT m
+liftMonad m = liftEither =<< runExceptT m
 
 --import Control.Monad.Except
 
