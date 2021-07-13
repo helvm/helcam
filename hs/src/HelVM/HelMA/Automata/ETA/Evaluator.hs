@@ -25,16 +25,16 @@ import Prelude hiding (divMod)
 
 import qualified Data.Sequence as Seq
 
-uncurryEval :: Evaluator Symbol m => (Source , StackType) -> SafeExceptT m ()
-uncurryEval = uncurry eval
+uncurryEval :: (BIO m , Evaluator Symbol m) => (Source , StackType) -> m ()
+uncurryEval p = uncurry eval p
 
 ----
 
 evalParams :: (BIO m , Evaluator Symbol m) => EvalParams -> m ()
-evalParams p = liftExceptT $ eval (source p) (stack $ typeOptions p)
+evalParams p = eval (source p) (stack $ typeOptions p)
 
-eval :: Evaluator Symbol m => Source -> StackType -> SafeExceptT m ()
-eval source = evalTL $ tokenize source
+eval :: (BIO m , Evaluator Symbol m) => Source -> StackType -> m ()
+eval source stackType = liftExceptT $ evalTL (tokenize source) stackType
 
 evalTL :: Evaluator Symbol m => TokenList -> StackType -> SafeExceptT m ()
 evalTL tl ListStackType = start tl []
