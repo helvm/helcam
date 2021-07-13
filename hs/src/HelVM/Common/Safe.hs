@@ -21,7 +21,6 @@ module HelVM.Common.Safe (
   appendError,
 
   safeExceptT,
-  safe,
   legacySafeToSafe,
   safeToLegacySafe,
 
@@ -100,10 +99,7 @@ appendError message a = catchError a appendAndThrow where appendAndThrow e = thr
 -- Create Safe
 
 safeExceptT :: Monad m => m a -> SafeExceptT m a
-safeExceptT a = ExceptT $ safe <$> a
-
-safe :: a -> Safe a
-safe = pure
+safeExceptT a = ExceptT $ pure <$> a
 
 legacySafeToSafe :: LegacySafe a -> Safe a
 legacySafeToSafe = first toText

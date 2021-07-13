@@ -14,4 +14,4 @@ shouldBeDo action expected = shouldBe action =<< expected
 
 infix 1 `shouldSafe`
 shouldSafe :: (HasCallStack , Show a , Eq a) => Safe a -> a -> Expectation
-shouldSafe action expected = shouldBe action $ safe expected
+shouldSafe action expected = shouldBe action $ pure expected

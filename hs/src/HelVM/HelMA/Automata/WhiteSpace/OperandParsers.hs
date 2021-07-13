@@ -15,7 +15,7 @@ parseInteger :: OperandParser Integer
 parseInteger []     = liftError "EOL"
 parseInteger (S:tl) = parseUtil (makeIntegral 2) tl
 parseInteger (T:tl) = negationIntegral <$> parseUtil (makeIntegral 2) tl
-parseInteger (N:tl) = safe (0 , tl)
+parseInteger (N:tl) = pure (0 , tl)
 
 negationIntegral :: (Integer , TokenList) -> (Integer , TokenList)
 negationIntegral (i , l) = (-i , l)
@@ -44,6 +44,6 @@ parseString' maker tl = parseString'' <$> splitByN tl where
 
 splitByN :: OperandParser TokenList
 splitByN []         = liftError "Empty list"
-splitByN (N:tl) = safe ([]    , tl)
+splitByN (N:tl) = pure ([]    , tl)
 splitByN (t:tl) = splitByN' <$> splitByN tl where
   splitByN' (acc , tl') = (t:acc , tl')

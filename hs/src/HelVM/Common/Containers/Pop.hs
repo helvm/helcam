@@ -27,5 +27,5 @@ instance Show e => Pop2 e [e] where
   pop2           c  = liftErrorTuple ("Empty" , show c)
 
 instance Show e => Pop2 e (Seq e) where
-  pop2 (e :<| e' :<| c) = safe (e , e', c)
+  pop2 (e :<| e' :<| c) = pure (e , e', c)
   pop2               c  = liftErrorTuple ("Empty " , show c)

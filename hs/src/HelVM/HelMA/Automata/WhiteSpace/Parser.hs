@@ -30,7 +30,7 @@ parse tokenType source = parseTL $ tokenize tokenType source
 parseTL :: TokenList -> Bool -> Safe InstructionList
 parseTL tl ascii = parseTL' tl where
   parseTL' :: TokenList -> Safe InstructionList
-  parseTL' []            = safe []
+  parseTL' []            = pure []
   -- Stack instructions
   parseTL' (S:S:tl')     = parseTL'' =<< parseSymbol tl' where parseTL'' (symbol , tl'') = (Liter symbol  : ) <$> parseTL' tl''
   parseTL' (S:T:S:tl')   = parseTL'' =<< parseIndex  tl' where parseTL'' (index  , tl'') = (Copy  index   : ) <$> parseTL' tl''
