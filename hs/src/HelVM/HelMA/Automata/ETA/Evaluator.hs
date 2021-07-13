@@ -26,7 +26,7 @@ import Prelude hiding (divMod)
 import qualified Data.Sequence as Seq
 
 uncurryEval :: (BIO m , Evaluator Symbol m) => (Source , StackType) -> m ()
-uncurryEval p = uncurry eval p
+uncurryEval = uncurry eval
 
 ----
 
