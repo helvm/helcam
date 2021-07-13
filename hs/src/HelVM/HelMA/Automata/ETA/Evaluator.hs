@@ -33,14 +33,14 @@ evalParams :: (BIO m , Evaluator Symbol m) => EvalParams -> m ()
 evalParams p = eval (source p) (stack $ typeOptions p)
 
 eval :: (BIO m , Evaluator Symbol m) => Source -> StackType -> m ()
-eval source stackType = evalTL (tokenize source) stackType
+eval source = evalTL (tokenize source)
 
 evalTL ::  (BIO m , Evaluator Symbol m) => TokenList -> StackType -> m ()
 evalTL tl ListStackType = start tl []
 evalTL tl SeqStackType  = start tl Seq.empty
 
 start :: (BIO m , SEvaluator Symbol s m) => TokenList -> s -> m ()
-start il s = next (IU il 0) s
+start il = next (IU il 0)
 
 next :: (BIO m , SEvaluator e s m) => InstructionUnit -> s -> m ()
 next iu s = doInstruction' =<< liftSafe (nextIU iu)  where doInstruction' (t , iu') = doInstruction t iu' s
@@ -70,7 +70,7 @@ doInstruction Nothing iu s = doEnd iu s
 -- IO instructions
 doOutputChar :: (BIO m , SEvaluator e s m) => InstructionUnit -> s -> m ()
 doOutputChar iu s = doOutputChar' =<< liftSafe (pop1 s) where
-  doOutputChar' (e , s') = (wPutChar (genericChr e)) *> next iu s'
+  doOutputChar' (e , s') = wPutChar (genericChr e) *> next iu s'
 
 doInputChar :: (BIO m , SEvaluator e s m) => InstructionUnit -> s -> m ()
 doInputChar iu s = doInputChar' =<< wGetChar where
