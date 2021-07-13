@@ -38,45 +38,45 @@ import Prelude hiding (swap)
 import qualified Data.IntMap   as IntMap
 import qualified Data.Sequence as Seq
 
-simpleEval :: (BIO m , Evaluator Symbol m) => (TokenType , Source , Bool , StackType , RAMType) -> m ()
+simpleEval :: (Evaluator Symbol m) => (TokenType , Source , Bool , StackType , RAMType) -> m ()
 simpleEval (tokenType , source , asciiLabel , stackType , ramType) = eval tokenType source asciiLabel stackType ramType
 
-simpleEvalTL :: (BIO m , Evaluator Symbol m) => TokenList -> m ()
+simpleEvalTL :: (Evaluator Symbol m) => TokenList -> m ()
 simpleEvalTL tl = evalTL tl False defaultStackType defaultRAMType
 
-evalParams :: (BIO m , Evaluator Symbol m) => TokenType -> EvalParams -> m ()
+evalParams :: (Evaluator Symbol m) => TokenType -> EvalParams -> m ()
 evalParams tokenType p = eval tokenType (source p) (asciiLabel p) (stack $ typeOptions p) (ram $ typeOptions p)
 
-eval :: (BIO m , Evaluator Symbol m) => TokenType -> Source -> Bool -> StackType -> RAMType -> m ()
+eval :: (Evaluator Symbol m) => TokenType -> Source -> Bool -> StackType -> RAMType -> m ()
 eval tokenType source = evalTL $ tokenize tokenType source
 
-evalTL :: (BIO m , Evaluator Symbol m) => TokenList -> Bool -> StackType -> RAMType -> m ()
+evalTL :: (Evaluator Symbol m) => TokenList -> Bool -> StackType -> RAMType -> m ()
 evalTL tl ascii st rt = evalTL' =<< liftSafe (parseTL tl ascii) where evalTL' il = evalIL il st rt
 
-evalIL :: (BIO m , Evaluator Symbol m) => InstructionList -> StackType -> RAMType -> m ()
+evalIL :: (Evaluator Symbol m) => InstructionList -> StackType -> RAMType -> m ()
 evalIL il s ListRAMType   = evalIL' il s []
 evalIL il s SeqRAMType    = evalIL' il s Seq.empty
 evalIL il s IntMapRAMType = evalIL' il s IntMap.empty
 
-evalIL' :: (BIO m , REvaluator Symbol r m) => InstructionList -> StackType -> r -> m ()
+evalIL' :: (REvaluator Symbol r m) => InstructionList -> StackType -> r -> m ()
 evalIL' il ListStackType = start il []
 evalIL' il SeqStackType  = start il Seq.empty
 
-start :: (BIO m , SREvaluator Symbol s r m) => InstructionList -> s -> r -> m ()
+start :: (SREvaluator Symbol s r m) => InstructionList -> s -> r -> m ()
 start il = next (IU il 0 (IS []))
 
-next :: (BIO m , SREvaluator Symbol s r m) => InstructionUnit -> s -> r -> m ()
+next :: (SREvaluator Symbol s r m) => InstructionUnit -> s -> r -> m ()
 next (IU il ic is) s r = doInstruction' =<< liftSafe (indexSafe il ic) where doInstruction' i = doInstruction i (IU il (ic+1) is) s r
 
-stackNext :: (BIO m , SREvaluator Symbol s r m) => InstructionUnit -> r -> s -> m ()
+stackNext :: (SREvaluator Symbol s r m) => InstructionUnit -> r -> s -> m ()
 stackNext ic r s = next ic s r
 
-iuNext :: (BIO m , SREvaluator Symbol s r m) => s -> r -> InstructionUnit -> m ()
+iuNext :: (SREvaluator Symbol s r m) => s -> r -> InstructionUnit -> m ()
 iuNext s r ic = next ic s r
 
 ----
 
-doInstruction :: (BIO m , SREvaluator Symbol s r m) => Instruction -> InstructionUnit -> s -> r -> m ()
+doInstruction :: (SREvaluator Symbol s r m) => Instruction -> InstructionUnit -> s -> r -> m ()
 
 -- IO instructions
 doInstruction  OutputChar iu s r = doOutputChar iu s r
@@ -114,24 +114,24 @@ doInstruction End iu s r = doEnd iu s r
 doInstruction i   iu _ _ = liftError $ "Can't do " <> show i <> " " <> show iu
 
 -- IO instructions
-doOutputChar :: (BIO m , SREvaluator Symbol s r m) => InstructionUnit -> s -> r -> m ()
+doOutputChar :: (SREvaluator Symbol s r m) => InstructionUnit -> s -> r -> m ()
 doOutputChar iu s r = doOutputChar' =<< liftSafe (pop1 s) where
   doOutputChar' (e , s') = wPutChar (genericChr e) *> next iu s' r
 
-doInputChar :: (BIO m , SREvaluator Symbol s r m) => InstructionUnit -> s -> r -> m ()
+doInputChar :: (SREvaluator Symbol s r m) => InstructionUnit -> s -> r -> m ()
 doInputChar iu s r = doInputChar' =<< liftSafe (pop1 s) where
   doInputChar' (address , s') = doInputChar'' =<< wGetChar where
     doInputChar'' char = next iu s' $ storeChar address char r
 
-doOutputNum :: (BIO m , SREvaluator Symbol s r m) => InstructionUnit -> s -> r -> m ()
+doOutputNum :: (SREvaluator Symbol s r m) => InstructionUnit -> s -> r -> m ()
 doOutputNum iu s r = doOutputNum' =<< liftSafe (pop1 s) where
   doOutputNum' (e , s') = wPutStr (show e) *> next iu s' r
 
-doInputNum :: (BIO m , SREvaluator Symbol s r m) => InstructionUnit -> s -> r -> m ()
+doInputNum :: (SREvaluator Symbol s r m) => InstructionUnit -> s -> r -> m ()
 doInputNum iu s r = doInputNum' =<< liftSafe (pop1 s) where
   doInputNum' (address , s') = doInputNum'' =<< wGetLine where
     doInputNum'' line = next iu s' =<< liftSafe (storeNum address line r)
 
 -- Terminate instruction
-doEnd :: (BIO m , SREvaluator Symbol s r m) => InstructionUnit -> s -> r -> m ()
+doEnd :: (SREvaluator Symbol s r m) => InstructionUnit -> s -> r -> m ()
 doEnd iu s _ = wLogStrLn (show s) *> wLogStrLn (show iu)
