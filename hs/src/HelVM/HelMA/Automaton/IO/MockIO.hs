@@ -17,22 +17,22 @@ import HelVM.Common.Safe
 
 import qualified Relude.Unsafe as Unsafe
 
-batchExecMockIO :: MockIO_ -> Output
+batchExecMockIO :: MockIO () -> Output
 batchExecMockIO = flipExecMockIO ""
 
-flipExecMockIO :: Input -> MockIO_ -> Output
+flipExecMockIO :: Input -> MockIO () -> Output
 flipExecMockIO = flip execMockIO
 
 execMockIO :: MockIO () -> Interact
 execMockIO mockIO  = getOutput . execState mockIO . createMockIO
 
-batchEvalMockIO :: MockIO_ -> Output
+batchEvalMockIO :: MockIO () -> Output
 batchEvalMockIO = flipEvalMockIO ""
 
-flipEvalMockIO :: Input -> MockIO_ -> Output
+flipEvalMockIO :: Input -> MockIO () -> Output
 flipEvalMockIO = flip evalMockIO
 
-evalMockIO :: MockIO_ -> Interact
+evalMockIO :: MockIO () -> Interact
 evalMockIO mockIO = getLogged . execState mockIO . createMockIO
 
 ----
@@ -61,27 +61,25 @@ mockGetLine :: MockIO Text
 mockGetLine = mockGetLine' =<< get where
   mockGetLine' mockIO = toText line <$ put mockIO { input = input' } where (line , input') = splitStringByLn $ input mockIO
 
-mockPutChar :: Char -> MockIO_
+mockPutChar :: Char -> MockIO ()
 mockPutChar char = mockPutChar' =<< get where
   mockPutChar' mockIO = put mockIO { output = char : output mockIO }
 
-mockPutInt :: Int -> MockIO_
+mockPutInt :: Int -> MockIO ()
 mockPutInt value = mockPutInt' =<< get where
   mockPutInt' mockIO = put $ mockIO { output = chr  value : output mockIO }
 
 
-mockPutStr :: Text -> MockIO_
+mockPutStr :: Text -> MockIO ()
 mockPutStr text = mockPutStr' =<< get where
   mockPutStr' mockIO = put $ mockIO { output = reverse (toString text) <> output mockIO }
 
 
-mockLogStr :: Text -> MockIO_
+mockLogStr :: Text -> MockIO ()
 mockLogStr text = mockLogStr' =<< get where
   mockLogStr' mockIO = put $ mockIO { logged = reverse (toString text) <> logged mockIO }
 
 ----
-
-type MockIO_ = MockIO ()
 
 type MockIO = State MockIOData
 
