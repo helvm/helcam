@@ -4,7 +4,7 @@ import HelVM.Common.Safe
 
 import Data.Sequence (Seq(..))
 
-discard :: Pop1 e c => c -> Safe c
+discard :: (MonadSafeError m , Pop1 e c) => c -> m c
 discard s = discard' <$> pop1 s where
   discard' (_ , s') = s'
 
@@ -20,7 +20,7 @@ instance Show e => Pop1 e (Seq e) where
   pop1         c  = liftErrorTuple ("Empty" , show c)
 
 class Pop2 e c | c -> e where
-  pop2 :: c -> Safe (e , e , c)
+  pop2 :: c -> MonadSafeError m => m (e , e , c)
 
 instance Show e => Pop2 e [e] where
   pop2 (e : e' : c) = pure (e , e', c)
