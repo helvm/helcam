@@ -9,6 +9,7 @@ import HelVM.WrappedGoldenIO
 import HelVM.HelMA.Automaton.IO.MockIO
 import HelVM.HelMA.Automaton.Types.StackType
 
+import HelVM.Common.Safe
 import HelVM.Common.SafeExceptT
 
 import System.FilePath.Posix
@@ -42,9 +43,10 @@ spec = do
       let minorPath = show stackType </> fileName <> input
       let params = ( , stackType) <$> readEtaFile ("from-eas" </> fileName)
       let inputText = toText input
+      let aaaa a = flipExecMockIO inputText $ (fmap unsafe . runExceptT) $ uncurryEval a
       describe minorPath$ do
         it ("monadic" </> minorPath) $ do
-          flipExecMockIO inputText . unsafeRunExceptT . uncurryEval <$> params `goldenShouldReturn` buildAbsoluteOutFileName ("from-eas" </> "monadic" </> minorPath)
+          (aaaa <$> params) `goldenShouldReturn` buildAbsoluteOutFileName ("from-eas" </> "monadic" </> minorPath)
         it ("logging" </> minorPath) $ do
           flipEvalMockIO inputText . unsafeRunExceptT . uncurryEval <$> params `goldenShouldReturn` buildAbsoluteOutFileName ("from-eas" </> "logging" </> minorPath)
 
