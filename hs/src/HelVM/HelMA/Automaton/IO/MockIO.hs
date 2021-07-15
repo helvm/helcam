@@ -26,7 +26,7 @@ import HelVM.Common.Safe
 
 import qualified Relude.Unsafe as Unsafe
 
-
+--FIXME
 batchOutputSafeMockIO :: MockIO (Safe ()) -> Safe Output
 batchOutputSafeMockIO = flipOutputSafeMockIO ""
 
@@ -64,6 +64,8 @@ outputMockIO mockIO  = calculateOutput . execMockIO mockIO
 
 loggedMockIO :: MockIO a -> Input -> Output
 loggedMockIO mockIO = calculateLogged . execMockIO mockIO
+
+----
 
 execMockIO :: MockIO a -> Input -> MockIOData
 execMockIO mockIO = execState mockIO . createMockIO

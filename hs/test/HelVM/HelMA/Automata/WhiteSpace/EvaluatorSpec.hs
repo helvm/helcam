@@ -36,7 +36,7 @@ spec = do
                , ("name"         , "WriteOnly\n")
                ] >><<< options) $ \(fileName , input , ascii , stackType , ramType) -> do
           let params = (WhiteTokenType ,  , ascii , stackType , ramType) <$> readWsFile ("original" </> fileName)
-          let exec f = safeIOToIO (f input . runExceptT . simpleEval <$> params)
+          let exec f = safeIOToIO $ f input . runExceptT . simpleEval <$> params
           let minorPath = show ascii <-> show stackType <-> show ramType </> fileName
           describe minorPath $ do
             it ("monadic" </> minorPath) $ do
@@ -56,13 +56,13 @@ spec = do
                , ("prim"        , ""           )
                ] >><<< options) $ \(fileName , input , ascii , stackType , ramType) -> do
           let params = (VisibleTokenType ,  , ascii , stackType , ramType) <$> readStnFile ("from-wsa" </> fileName)
-          let exec f = f input . unsafeRunExceptT . simpleEval <$> params
+          let exec f = safeIOToIO $ f input . runExceptT . simpleEval <$> params
           let minorPath = show ascii <-> show stackType <-> show ramType </> fileName
           describe minorPath $ do
             it ("monadic" </> minorPath) $ do
-              exec flipOutputMockIO `goldenShouldReturn` buildAbsoluteOutFileName (majorPath </> "monadic" </> minorPath)
+              exec flipOutputSafeMockIO `goldenShouldReturn` buildAbsoluteOutFileName (majorPath </> "monadic" </> minorPath)
             it ("logging" </> minorPath) $ do
-              exec flipLoggedMockIO `goldenShouldReturn` buildAbsoluteOutFileName (majorPath </> "logging" </> minorPath)
+              exec flipLoggedSafeMockIO `goldenShouldReturn` buildAbsoluteOutFileName (majorPath </> "logging" </> minorPath)
 
       describe "original" $ do
         let majorPath = "simpleEval" </> "original" </> "stn"
