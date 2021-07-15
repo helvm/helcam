@@ -43,8 +43,8 @@ spec = do
       let minorPath = show stackType </> fileName <> input
       let params = ( , stackType) <$> readEtaFile ("from-eas" </> fileName)
       let inputText = toText input
-      let aaaa = flipExecSafeMockIO inputText . runExceptT . uncurryEval
-      let bbbb = safeIOToIO (aaaa <$> params)
+--      let aaaa = flipExecSafeMockIO inputText . runExceptT . uncurryEval
+      let bbbb = safeIOToIO $ (flipExecSafeMockIO inputText . runExceptT . uncurryEval) <$> params
       let cccc = flipEvalMockIO inputText . unsafeRunExceptT . uncurryEval <$> params
       describe minorPath$ do
         it ("monadic" </> minorPath) $ do
