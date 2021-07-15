@@ -46,12 +46,13 @@ spec = do
       let aaaa a = (flipExecSafeMockIO inputText $ runExceptT $ uncurryEval a) :: (Safe Text)
 --      let aaaa a = flipExecMockIO inputText $ (fmap unsafe . runExceptT) $ uncurryEval a
       let bbbb = safeIOToIO (aaaa <$> params)
+      let cccc = flipEvalMockIO inputText . unsafeRunExceptT . uncurryEval <$> params
       describe minorPath$ do
         it ("monadic" </> minorPath) $ do
           bbbb `goldenShouldReturn` buildAbsoluteOutFileName ("from-eas" </> "monadic" </> minorPath)
 --          (aaaa <$> params) `goldenShouldReturn` buildAbsoluteOutFileName ("from-eas" </> "monadic" </> minorPath)
         it ("logging" </> minorPath) $ do
-          flipEvalMockIO inputText . unsafeRunExceptT . uncurryEval <$> params `goldenShouldReturn` buildAbsoluteOutFileName ("from-eas" </> "logging" </> minorPath)
+          cccc `goldenShouldReturn` buildAbsoluteOutFileName ("from-eas" </> "logging" </> minorPath)
 
   describe "original" $ do
     forM_ ([ ("hello"   , "" )
