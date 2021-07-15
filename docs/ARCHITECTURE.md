@@ -2,10 +2,9 @@
 
 We have spagheti ARCHITECTURE
 
-* Spec for unit nad inegration tests
-* golden-spec for golden tests
-* optparse-applicative for parse options
-* mtl for IoC
-* relude as standard library
-* mono-functor as container standard library
-
+* [x] Spec for unit nad inegration tests
+* [x] golden-spec for golden tests
+* [x] mtl for IoC
+* [x] optparse-applicative for parse options
+* [] mono-functor as container standard library
+* [x] relude as standard library
