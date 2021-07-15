@@ -3,7 +3,7 @@
 We have spagheti ARCHITECTURE
 * [x] hlint for analysis
 * [ ] stan for analysis
-* [x] hspec for unit nad inegration tests
+* [x] hspec for unit and integration tests
 * [x] hspec-golden for golden tests
 * [ ] for benchmark tests
 * [x] mtl for IoC
