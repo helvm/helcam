@@ -14,7 +14,6 @@ import HelVM.HelMA.Automaton.Types.StackType
 import HelVM.HelMA.Automaton.Types.TokenType
 
 import HelVM.Common.Safe
-import HelVM.Common.SafeExceptT
 
 import System.FilePath.Posix
 

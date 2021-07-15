@@ -37,7 +37,6 @@ library
         HelVM.Common.Digit.ToDigit
         HelVM.Common.ReadText
         HelVM.Common.Safe
-        HelVM.Common.SafeExceptT
         HelVM.Common.Util
 
         HelVM.HelMA.Automaton.API.EvalParams
