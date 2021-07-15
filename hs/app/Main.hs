@@ -9,7 +9,6 @@ import HelVM.HelMA.Automaton.API.TypeOptions
 import HelVM.HelMA.Automaton.IO.BusinessIO
 
 import HelVM.Common.Safe
---import HelVM.Common.SafeExceptT
 
 import HelVM.HelMA.Automaton.Types.CellType
 import HelVM.HelMA.Automaton.Types.IntCellType

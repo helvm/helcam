@@ -1,5 +1,4 @@
 module HelVM.Common.Safe (
---  safeExceptTIOToIO,
   safeIOToIO,
   safeToIO,
   exceptTToIO,
@@ -30,6 +29,7 @@ module HelVM.Common.Safe (
 
   unsafe,
 
+  SafeIO,
   MonadSafeError,
   SafeExceptT,
   Safe,
@@ -41,10 +41,7 @@ import Control.Monad.Except hiding (ExceptT , runExceptT)
 
 import System.IO.Error
 
---safeExceptTIOToIO :: IO (SafeExceptT a) -> IO a
---safeExceptTIOToIO a = exceptTToIO =<< a
-
-safeIOToIO :: IO (Safe a) -> IO a
+safeIOToIO :: SafeIO a -> IO a
 safeIOToIO a = safeToIO =<< a
 
 safeToIO :: Safe a -> IO a
@@ -128,6 +125,8 @@ unsafe (Right a) = a
 unsafe (Left a) = error a
 
 ----
+
+type SafeIO a = IO (Safe a)
 
 type MonadSafeError m = MonadError Error m
 

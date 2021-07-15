@@ -32,8 +32,8 @@ type SREvaluator e s r m = (Stack e s , RAM e r , Evaluator e m)
 type REvaluator e r m = (RAM e r , Evaluator e m)
 type SEvaluator e s m = (Stack e s , Evaluator e m)
 type Evaluator e m = (Element e , BIO m)
-type Element e  = (Default e , Read e , Show e , Integral e)
 
+type Element e  = (Default e , Read e , Show e , Integral e)
 type BIO m = (MonadSafeError m , BusinessIO m)
 
 class Monad m => BusinessIO m where
