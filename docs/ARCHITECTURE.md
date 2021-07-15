@@ -7,6 +7,6 @@ We have spagheti ARCHITECTURE
 * [x] hspec-golden for golden tests
 * [ ] for benchmark tests
 * [x] mtl for IoC
-* [x] optparse-applicative for parse options
 * [ ] mono-functor as container standard library
 * [x] relude as standard library
+* [x] optparse-applicative for parse options
