@@ -48,16 +48,16 @@ loggedSafeMockIO mockIO = pure . loggedMockIO mockIO
 ----
 
 batchOutputMockIO :: MockIO () -> Output
-batchOutputMockIO = flipOutputMockIO ""
+batchOutputMockIO = calculateOutput . batchExecMockIO
 
 batchLoggedMockIO :: MockIO () -> Output
-batchLoggedMockIO = flipLoggedMockIO ""
+batchLoggedMockIO = calculateLogged . batchExecMockIO
 
 flipOutputMockIO :: Input -> MockIO () -> Output
-flipOutputMockIO = flip outputMockIO
+flipOutputMockIO i = calculateOutput . flipExecMockIO i
 
 flipLoggedMockIO :: Input -> MockIO () -> Output
-flipLoggedMockIO = flip loggedMockIO
+flipLoggedMockIO i = calculateLogged . flipExecMockIO i
 
 outputMockIO :: MockIO a -> Input -> Output
 outputMockIO mockIO  = calculateOutput . execMockIO mockIO
@@ -66,6 +66,12 @@ loggedMockIO :: MockIO a -> Input -> Output
 loggedMockIO mockIO = calculateLogged . execMockIO mockIO
 
 ----
+
+batchExecMockIO :: MockIO a -> MockIOData
+batchExecMockIO = flipExecMockIO ""
+
+flipExecMockIO :: Input -> MockIO a -> MockIOData
+flipExecMockIO = flip execMockIO
 
 execMockIO :: MockIO a -> Input -> MockIOData
 execMockIO mockIO = execState mockIO . createMockIO
