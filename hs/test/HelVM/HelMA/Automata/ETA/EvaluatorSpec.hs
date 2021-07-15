@@ -41,7 +41,7 @@ spec = do
            ] >><| stackTypes
           ) $ \(fileName , input , stackType) -> do
       let minorPath = show stackType </> fileName <> input
-      let exec f = safeIOToIO $ f (toText input) . runExceptT . uncurryEval <$> (( , stackType) <$> readEtaFile ("from-eas" </> fileName))
+      let exec f = safeIOToIO $ f (toText input) . runExceptT . uncurryEval <$> (( , stackType) <$> readEtaFile ("from-eas" </> fileName)) :: IO Text
       describe minorPath$ do
         it ("monadic" </> minorPath) $ do
           exec flipOutputSafeMockIO `goldenShouldReturn` buildAbsoluteOutFileName ("from-eas" </> "monadic" </> minorPath)
@@ -66,8 +66,8 @@ spec = do
            ] >><| stackTypes
           ) $ \(fileName , input , stackType) -> do
       let minorPath = show stackType </> fileName <> input
-      let exec f = f (toText input) . unsafeRunExceptT . uncurryEval <$> ( , stackType) <$> readEtaFile ("original" </> fileName)
---      let exec f = safeIOToIO $ f (toText input) . runExceptT . uncurryEval <$> (( , stackType) <$> readEtaFile ("original" </> fileName))
+      let exec f = f (toText input) . unsafeRunExceptT . uncurryEval <$> ( , stackType) <$> readEtaFile ("original" </> fileName) :: IO Text
+--      let exec f = safeIOToIO $ (f (toText input)) . runExceptT . uncurryEval <$> (( , stackType) <$> readEtaFile ("original" </> fileName)) :: IO Text
       describe minorPath $ do
         it ("monadic" </> minorPath) $ do
           exec flipOutputMockIO `goldenShouldReturn` buildAbsoluteOutFileName ("original" </> "monadic" </> minorPath)
