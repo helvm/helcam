@@ -39,8 +39,8 @@ spec = do
            , ("bottles" , ""   )
            ] >><| stackTypes
           ) $ \(fileName , input , stackType) -> do
-      let minorPath = show stackType </> fileName <> input
       let exec f = safeIOToIO $ f (toText input) . runExceptT . uncurryEval <$> (( , stackType) <$> readEtaFile ("from-eas" </> fileName))
+      let minorPath = show stackType </> fileName <> input
       describe minorPath$ do
         it ("monadic" </> minorPath) $ do
           exec flipOutputSafeMockIO `goldenShouldReturn` buildAbsoluteOutFileName ("from-eas" </> "monadic" </> minorPath)
@@ -64,8 +64,8 @@ spec = do
            , ("crlf"    , "" )
            ] >><| stackTypes
           ) $ \(fileName , input , stackType) -> do
-      let minorPath = show stackType </> fileName <> input
       let exec f = safeIOToIO $ f (toText input) . runExceptT . uncurryEval <$> (( , stackType) <$> readEtaFile ("original" </> fileName))
+      let minorPath = show stackType </> fileName <> input
       describe minorPath $ do
         it ("monadic" </> minorPath) $ do
           exec flipOutputSafeMockIO `goldenShouldReturn` buildAbsoluteOutFileName ("original" </> "monadic" </> minorPath)

@@ -34,8 +34,8 @@ spec = do
                , ("loctest"      , "1\n2\n"     )
                , ("name"         , "WriteOnly\n")
                ] >><<< options) $ \(fileName , input , ascii , stackType , ramType) -> do
-          let minorPath = show ascii <-> show stackType <-> show ramType </> fileName
           let params = (WhiteTokenType ,  , ascii , stackType , ramType) <$> readWsFile ("original" </> fileName)
+          let minorPath = show ascii <-> show stackType <-> show ramType </> fileName
           describe minorPath $ do
             it ("monadic" </> minorPath) $ do
               flipOutputMockIO input . unsafeRunExceptT . simpleEval <$> params `goldenShouldReturn` buildAbsoluteOutFileName (majorPath </> "monadic" </> minorPath)
@@ -53,8 +53,8 @@ spec = do
                , ("bottles"     , ""           )
                , ("prim"        , ""           )
                ] >><<< options) $ \(fileName , input , ascii , stackType , ramType) -> do
-          let minorPath = show ascii <-> show stackType <-> show ramType </> fileName
           let params = (VisibleTokenType ,  , ascii , stackType , ramType) <$> readStnFile ("from-wsa" </> fileName)
+          let minorPath = show ascii <-> show stackType <-> show ramType </> fileName
           describe minorPath $ do
             it ("monadic" </> minorPath) $ do
               flipOutputMockIO input . unsafeRunExceptT . simpleEval <$> params `goldenShouldReturn` buildAbsoluteOutFileName (majorPath </> "monadic" </> minorPath)
@@ -73,8 +73,8 @@ spec = do
                , ("name"         , "WriteOnly\n")
                , ("truthMachine" , "0\n"        )
                ] >><<< options) $ \(fileName , input , ascii , stackType , ramType) -> do
-          let minorPath = show ascii <-> show stackType <-> show ramType </> fileName
           let params = (VisibleTokenType ,  , ascii , stackType , ramType) <$> readStnFile ("original" </> fileName)
+          let minorPath = show ascii <-> show stackType <-> show ramType </> fileName
           describe minorPath $ do
             it ("monadic" </> minorPath) $ do
               flipOutputMockIO input . unsafeRunExceptT . simpleEval <$> params `goldenShouldReturn` buildAbsoluteOutFileName (majorPath </> "monadic" </> minorPath)
