@@ -77,13 +77,13 @@ spec = do
                , ("truthMachine" , "0\n"        )
                ] >><<< options) $ \(fileName , input , ascii , stackType , ramType) -> do
           let params = (VisibleTokenType ,  , ascii , stackType , ramType) <$> readStnFile ("original" </> fileName)
-          let exec f = f input . unsafeRunExceptT . simpleEval <$> params
+          let exec f = safeIOToIO $ f input . runExceptT . simpleEval <$> params
           let minorPath = show ascii <-> show stackType <-> show ramType </> fileName
           describe minorPath $ do
             it ("monadic" </> minorPath) $ do
-              exec flipOutputMockIO `goldenShouldReturn` buildAbsoluteOutFileName (majorPath </> "monadic" </> minorPath)
+              exec flipOutputSafeMockIO `goldenShouldReturn` buildAbsoluteOutFileName (majorPath </> "monadic" </> minorPath)
             it ("logging" </> minorPath) $ do
-              exec flipLoggedMockIO `goldenShouldReturn` buildAbsoluteOutFileName (majorPath </> "logging" </> minorPath)
+              exec flipLoggedSafeMockIO `goldenShouldReturn` buildAbsoluteOutFileName (majorPath </> "logging" </> minorPath)
 
   describe "simpleEvalTL" $ do
     forM_ [ ("countTL"        , countTL        , ""           )
@@ -96,17 +96,17 @@ spec = do
           , ("nameTL"         , nameTL         , "WriteOnly\n")
           , ("truthMachineTL" , truthMachineTL , "0\n"        )
           ] $ \(fileName , tl , input) -> do
-      let exec f = (f input . unsafeRunExceptT . simpleEvalTL) tl
+      let exec f = safeToIO ((f input . runExceptT . simpleEvalTL) tl)
       describe fileName $ do
         it ("monadic" </> fileName) $ do
-          exec flipOutputMockIO `goldenShouldBe` buildAbsoluteOutFileName ("simpleEvalTL" </> "monadic" </> fileName)
+          exec flipOutputSafeMockIO `goldenShouldReturn` buildAbsoluteOutFileName ("simpleEvalTL" </> "monadic" </> fileName)
         it ("logging" </> fileName) $ do
-          exec flipLoggedMockIO `goldenShouldBe` buildAbsoluteOutFileName ("simpleEvalTL" </> "logging" </> fileName)
+          exec flipLoggedSafeMockIO `goldenShouldReturn` buildAbsoluteOutFileName ("simpleEvalTL" </> "logging" </> fileName)
 
   describe "simpleEvalIL" $ do
     forM_ [ ("call"     , [Call "A", End , Mark "A", Return] , "")
           , ("push-pop" , [Liter 0 , Discard , End]          , "")
           ] $ \(fileName , il , input) -> do
-      let exec = flipLoggedMockIO input (unsafeRunExceptT $ evalIL il SeqStackType IntMapRAMType)
+      let exec = safeToIO $ flipLoggedSafeMockIO input (runExceptT $ evalIL il SeqStackType IntMapRAMType)
       it fileName $ do
-        exec `goldenShouldBe` buildAbsoluteOutFileName ("simpleEvalIL" </> "logging" </> fileName)
+        exec `goldenShouldReturn` buildAbsoluteOutFileName ("simpleEvalIL" </> "logging" </> fileName)
