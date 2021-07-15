@@ -1,4 +1,5 @@
 module HelVM.HelMA.Automaton.IO.MockIO (
+  safeExecMockIOWithInput1,
   batchOutputSafeMockIO,
   batchLoggedSafeMockIO,
   flipOutputSafeMockIO,
@@ -31,7 +32,13 @@ import HelVM.Common.Safe
 import qualified Relude.Unsafe as Unsafe
 
 --FIXME
+safeExecMockIOWithInput1 :: Input
+                                  -> (MockIOData -> b)
+                                  -> SafeExceptT (State MockIOData) ()
+                                  -> Safe b
+safeExecMockIOWithInput1 input f = fmap f . safeExecMockIOWithInput input . runExceptT
 
+----
 
 batchOutputSafeMockIO :: MockIO (Safe ()) -> Safe Output
 batchOutputSafeMockIO = pure . batchOutputMockIO

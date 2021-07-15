@@ -37,7 +37,8 @@ spec = do
            , ("bottles" , ""   )
            ] >><| stackTypes
           ) $ \(fileName , input , stackType) -> do
-      let exec f = fmap f . safeExecMockIOWithInput (toText input) . runExceptT . uncurryEval <$> (( , stackType) <$> readEtaFile ("from-eas" </> fileName))
+      let params = (( , stackType) <$> readEtaFile ("from-eas" </> fileName))
+      let exec f = safeExecMockIOWithInput1 (toText input) f . uncurryEval <$> params
       let minorPath = show stackType </> fileName <> input
       describe minorPath$ do
         it ("monadic" </> minorPath) $ do
