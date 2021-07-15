@@ -43,13 +43,14 @@ spec = do
       let minorPath = show stackType </> fileName <> input
       let params = ( , stackType) <$> readEtaFile ("from-eas" </> fileName)
       let inputText = toText input
-      let monadic = safeIOToIO $ flipOutputSafeMockIO inputText . runExceptT . uncurryEval <$> params
-      let logging = safeIOToIO $ flipLoggedSafeMockIO inputText . runExceptT . uncurryEval <$> params
+      let exec f = safeIOToIO $ f inputText . runExceptT . uncurryEval <$> params
+--      let monadic = safeIOToIO $ flipOutputSafeMockIO inputText . runExceptT . uncurryEval <$> params
+--      let logging = safeIOToIO $ flipLoggedSafeMockIO inputText . runExceptT . uncurryEval <$> params
       describe minorPath$ do
         it ("monadic" </> minorPath) $ do
-          monadic `goldenShouldReturn` buildAbsoluteOutFileName ("from-eas" </> "monadic" </> minorPath)
+          exec flipOutputSafeMockIO `goldenShouldReturn` buildAbsoluteOutFileName ("from-eas" </> "monadic" </> minorPath)
         it ("logging" </> minorPath) $ do
-          logging `goldenShouldReturn` buildAbsoluteOutFileName ("from-eas" </> "logging" </> minorPath)
+          exec flipLoggedSafeMockIO `goldenShouldReturn` buildAbsoluteOutFileName ("from-eas" </> "logging" </> minorPath)
 
   describe "original" $ do
     forM_ ([ ("hello"   , "" )
