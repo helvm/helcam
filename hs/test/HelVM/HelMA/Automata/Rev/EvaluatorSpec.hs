@@ -10,7 +10,7 @@ import Test.Hspec
 spec :: Spec
 spec = do
   describe "monadic" $ do
-    it "Hello, world!" $ do (batchExecMockIO . eval) hw `shouldBe` hwo
+    it "Hello, world!" $ do (batchOutputMockIO . eval) hw `shouldBe` hwo
 
 hw :: Source
 hw = "#!/usr/bin/rev\n!dlrow ,olleH\n"

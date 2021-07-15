@@ -39,6 +39,6 @@ spec = do
       let minorPath = show cellType </> fileName
       describe minorPath $ do
         it ("monadic" </> minorPath) $ do
-          flipExecMockIO input . uncurryEval <$> params `goldenShouldReturn` buildAbsoluteOutFileName ("monadic" </> minorPath)
+          flipOutputMockIO input . uncurryEval <$> params `goldenShouldReturn` buildAbsoluteOutFileName ("monadic" </> minorPath)
         it ("logging" </> minorPath) $ do
-          flipExecMockIO input . uncurryEval <$> params `goldenShouldReturn` buildAbsoluteOutFileName ("logging" </> minorPath)
+          flipOutputMockIO input . uncurryEval <$> params `goldenShouldReturn` buildAbsoluteOutFileName ("logging" </> minorPath)

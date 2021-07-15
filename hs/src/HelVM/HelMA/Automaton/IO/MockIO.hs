@@ -6,12 +6,12 @@ module HelVM.HelMA.Automaton.IO.MockIO (
   execSafeMockIO,
   evalSafeMockIO,
 
-  batchExecMockIO,
-  batchEvalMockIO,
-  flipExecMockIO,
-  flipEvalMockIO,
-  execMockIO,
-  evalMockIO,
+  batchOutputMockIO,
+  batchLoggedMockIO,
+  flipOutputMockIO,
+  flipLoggedMockIO,
+  outputMockIO,
+  loggedMockIO,
 
   createMockIO,
   MockIO,
@@ -40,33 +40,33 @@ flipEvalSafeMockIO :: Input -> MockIO (Safe ()) -> Safe Output
 flipEvalSafeMockIO = flip evalSafeMockIO
 
 execSafeMockIO :: MockIO (Safe ()) -> Input -> Safe Output
-execSafeMockIO mockIO = pure . execMockIO mockIO
+execSafeMockIO mockIO = pure . outputMockIO mockIO
 
 evalSafeMockIO :: MockIO (Safe ()) -> Input -> Safe Output
-evalSafeMockIO mockIO = pure . evalMockIO mockIO
+evalSafeMockIO mockIO = pure . loggedMockIO mockIO
 
 ----
 
-batchExecMockIO :: MockIO () -> Output
-batchExecMockIO = flipExecMockIO ""
+batchOutputMockIO :: MockIO () -> Output
+batchOutputMockIO = flipOutputMockIO ""
 
-batchEvalMockIO :: MockIO () -> Output
-batchEvalMockIO = flipEvalMockIO ""
+batchLoggedMockIO :: MockIO () -> Output
+batchLoggedMockIO = flipLoggedMockIO ""
 
-flipExecMockIO :: Input -> MockIO () -> Output
-flipExecMockIO = flip execMockIO
+flipOutputMockIO :: Input -> MockIO () -> Output
+flipOutputMockIO = flip outputMockIO
 
-flipEvalMockIO :: Input -> MockIO () -> Output
-flipEvalMockIO = flip evalMockIO
+flipLoggedMockIO :: Input -> MockIO () -> Output
+flipLoggedMockIO = flip loggedMockIO
 
-execMockIO :: MockIO a -> Input -> Output
-execMockIO mockIO  = calculateOutput . getMockIO mockIO
+outputMockIO :: MockIO a -> Input -> Output
+outputMockIO mockIO  = calculateOutput . execMockIO mockIO
 
-evalMockIO :: MockIO a -> Input -> Output
-evalMockIO mockIO = calculateLogged . getMockIO mockIO
+loggedMockIO :: MockIO a -> Input -> Output
+loggedMockIO mockIO = calculateLogged . execMockIO mockIO
 
-getMockIO :: MockIO a -> Input -> MockIOData
-getMockIO mockIO = execState mockIO . createMockIO
+execMockIO :: MockIO a -> Input -> MockIOData
+execMockIO mockIO = execState mockIO . createMockIO
 
 ----
 
@@ -126,10 +126,10 @@ createMockIO :: Input -> MockIOData
 createMockIO i = MockIOData (toString i) "" ""
 
 calculateOutput :: MockIOData -> Output
-calculateOutput mockIO = calculate $ output mockIO
+calculateOutput = calculate . output
 
 calculateLogged :: MockIOData -> Output
-calculateLogged mockIO = calculate $ logged mockIO
+calculateLogged = calculate . logged
 
 calculate :: String -> Output
 calculate = toText . reverse

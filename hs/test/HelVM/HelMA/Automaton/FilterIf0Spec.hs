@@ -19,5 +19,5 @@ wFilterIf0 = do
 spec :: Spec
 spec = do
   describe "Test WFilter0" $ do
-    it "Test WFilterIf0 with execMockIO" $ do execMockIO wFilterIf0 "qwerty0uiop" `shouldBe` "qwerty\n"
-    it "Test WFilterIf0 with execMockIO" $ do evalMockIO wFilterIf0 "qwerty0uiop" `shouldBe` "\n"
+    it "Test WFilterIf0 with outputMockIO" $ do outputMockIO wFilterIf0 "qwerty0uiop" `shouldBe` "qwerty\n"
+    it "Test WFilterIf0 with outputMockIO" $ do loggedMockIO wFilterIf0 "qwerty0uiop" `shouldBe` "\n"

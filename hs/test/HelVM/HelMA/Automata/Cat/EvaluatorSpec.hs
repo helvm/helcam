@@ -11,7 +11,7 @@ spec :: Spec
 spec = do
 
   describe "monadic" $ do
-    it "Hello , world!" $ do (batchExecMockIO . eval) hw `shouldBe` toText hw
+    it "Hello , world!" $ do (batchOutputMockIO . eval) hw `shouldBe` toText hw
 
 hw :: Source
 hw = "#!/bin/cat\nHello , world!\n"
