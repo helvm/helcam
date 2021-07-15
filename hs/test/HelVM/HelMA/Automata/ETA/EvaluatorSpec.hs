@@ -37,13 +37,13 @@ spec = do
            , ("bottles" , ""   )
            ] >><| stackTypes
           ) $ \(fileName , input , stackType) -> do
-      let exec f = f (toText input) . runExceptT . uncurryEval <$> (( , stackType) <$> readEtaFile ("from-eas" </> fileName))
+      let exec f = fmap f . safeExecMockIOWithInput (toText input) . runExceptT . uncurryEval <$> (( , stackType) <$> readEtaFile ("from-eas" </> fileName))
       let minorPath = show stackType </> fileName <> input
       describe minorPath$ do
         it ("monadic" </> minorPath) $ do
-          exec flipOutputSafeMockIO `goldenShouldSafeIO` buildAbsoluteOutFileName ("from-eas" </> "monadic" </> minorPath)
+          exec calculateOutput `goldenShouldSafeIO` buildAbsoluteOutFileName ("from-eas" </> "monadic" </> minorPath)
         it ("logging" </> minorPath) $ do
-          exec flipLoggedSafeMockIO `goldenShouldSafeIO` buildAbsoluteOutFileName ("from-eas" </> "logging" </> minorPath)
+          exec calculateLogged `goldenShouldSafeIO` buildAbsoluteOutFileName ("from-eas" </> "logging" </> minorPath)
 
   describe "original" $ do
     forM_ ([ ("hello"   , "" )

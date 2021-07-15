@@ -31,6 +31,8 @@ import HelVM.Common.Safe
 import qualified Relude.Unsafe as Unsafe
 
 --FIXME
+
+
 batchOutputSafeMockIO :: MockIO (Safe ()) -> Safe Output
 batchOutputSafeMockIO = pure . batchOutputMockIO
 
