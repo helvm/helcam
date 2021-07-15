@@ -46,7 +46,7 @@ execSafeMockIOBatch :: MockIO (Safe ()) -> Safe MockIOData
 execMockIOBatch = pure . execMockIOBatch
 
 execSafeMockIOWithInput :: Input -> MockIO (Safe ()) -> Safe MockIOData
-execMockIOWithInput i = pure . execMockIOWithInput i
+execSafeMockIOWithInput i = pure . execMockIOWithInput i
 
 ----
 
