@@ -1,12 +1,12 @@
 module HelVM.HelMA.Automaton.IO.MockIO (
-  batchExecSafeMockIO,
-  flipExecSafeMockIO,
-  execSafeMockIO,
-  batchEvalSafeMockIO,
-  flipEvalSafeMockIO,
-  evalSafeMockIO,
-  createSafeMockIO,
-  SafeMockIO,
+--  batchExecSafeMockIO,
+--  flipExecSafeMockIO,
+--  execSafeMockIO,
+--  batchEvalSafeMockIO,
+--  flipEvalSafeMockIO,
+--  evalSafeMockIO,
+--  createSafeMockIO,
+--  SafeMockIO,
 
   batchExecMockIO,
   flipExecMockIO,
@@ -31,75 +31,83 @@ import HelVM.Common.Safe
 import qualified Relude.Unsafe as Unsafe
 
 
-batchExecSafeMockIO :: SafeMockIO (Safe ()) -> Safe Output
-batchExecSafeMockIO = flipExecSafeMockIO ""
-
-flipExecSafeMockIO :: Input -> SafeMockIO (Safe ()) -> Safe Output
-flipExecSafeMockIO = flip execSafeMockIO
-
-execSafeMockIO :: SafeMockIO (Safe ()) -> Input -> Safe Output
-execSafeMockIO safeMockIO input = getOutput <$> execState safeMockIO (createSafeMockIO input)
-
-batchEvalSafeMockIO :: SafeMockIO (Safe ()) -> Safe Output
-batchEvalSafeMockIO = flipEvalSafeMockIO ""
-
-flipEvalSafeMockIO :: Input -> SafeMockIO (Safe ()) -> Safe Output
-flipEvalSafeMockIO = flip evalSafeMockIO
-
-evalSafeMockIO :: SafeMockIO (Safe ()) -> Input -> Safe Output
-evalSafeMockIO safeMockIO input = getLogged <$> execState safeMockIO (createSafeMockIO input)
-
-----
-
-instance BusinessIO SafeMockIO where
-  wGetChar = safeMockGetChar
-  wGetLine = safeMockGetLine
-  wPutChar = safeMockPutChar
-  wPutInt  = safeMockPutInt
-  wPutStr  = safeMockPutStr
-  wLogStr  = safeMockLogStr
-
-instance BusinessIO (SafeExceptT SafeMockIO) where
-  wGetChar = safeExceptT   safeMockGetChar
-  wGetLine = safeExceptT   safeMockGetLine
-  wPutChar = safeExceptT . safeMockPutChar
-  wPutInt  = safeExceptT . safeMockPutInt
-  wPutStr  = safeExceptT . safeMockPutStr
-  wLogStr  = safeExceptT . safeMockLogStr
-
-safeMockGetChar :: SafeMockIO Char
-safeMockGetChar = error ""
+--batchExecSafeMockIO :: SafeMockIO (Safe ()) -> Safe Output
+--batchExecSafeMockIO = flipExecSafeMockIO ""
+--
+--flipExecSafeMockIO :: Input -> SafeMockIO (Safe ()) -> Safe Output
+--flipExecSafeMockIO = flip execSafeMockIO
+--
+--execSafeMockIO :: SafeMockIO (Safe ()) -> Input -> Safe Output
+--execSafeMockIO safeMockIO input = getOutput <$> execState safeMockIO (createSafeMockIO input)
+--
+--batchEvalSafeMockIO :: SafeMockIO (Safe ()) -> Safe Output
+--batchEvalSafeMockIO = flipEvalSafeMockIO ""
+--
+--flipEvalSafeMockIO :: Input -> SafeMockIO (Safe ()) -> Safe Output
+--flipEvalSafeMockIO = flip evalSafeMockIO
+--
+--evalSafeMockIO :: SafeMockIO (Safe ()) -> Input -> Safe Output
+--evalSafeMockIO safeMockIO input = getLogged <$> execState safeMockIO (createSafeMockIO input)
+--
+------
+--
+--instance BusinessIO SafeMockIO where
+--  wGetChar = safeMockGetChar
+--  wGetLine = safeMockGetLine
+--  wPutChar = safeMockPutChar
+--  wPutInt  = safeMockPutInt
+--  wPutStr  = safeMockPutStr
+--  wLogStr  = safeMockLogStr
+--
+--instance BusinessIO (SafeExceptT SafeMockIO) where
+--  wGetChar = safeExceptT   safeMockGetChar
+--  wGetLine = safeExceptT   safeMockGetLine
+--  wPutChar = safeExceptT . safeMockPutChar
+--  wPutInt  = safeExceptT . safeMockPutInt
+--  wPutStr  = safeExceptT . safeMockPutStr
+--  wLogStr  = safeExceptT . safeMockLogStr
+--
+--safeMockGetChar :: SafeMockIO Char
+----safeMockGetChar = error ""
 --safeMockGetChar = safeMockGetChar' <$> get --where
---  safeMockGetChar' = fmap safeMockGetChar'' where
---    safeMockGetChar'' mockIO = headOrError mockIO (input mockIO) <$ put mockIO { input = Unsafe.tail $ input mockIO }
-
---safeMockGetChar' :: SafeMockIOData -> SafeMockIOData
---safeMockGetChar' = id
-
-safeMockGetLine :: SafeMockIO Text
-safeMockGetLine = error ""
-
-safeMockPutChar :: Char -> SafeMockIO ()
-safeMockPutChar _ = error ""
-
-safeMockPutInt :: Int -> SafeMockIO ()
-safeMockPutInt _ = error ""
-
-
-safeMockPutStr :: Text -> SafeMockIO ()
-safeMockPutStr _ = error ""
-
-
-safeMockLogStr :: Text -> SafeMockIO ()
-safeMockLogStr _ = error ""
-
-----
-
-type SafeMockIO = State SafeMockIOData
-
-createSafeMockIO :: Input -> Safe MockIOData
-createSafeMockIO = pure . createMockIO
-
+----  safeMockGetChar' = fmap safeMockGetChar'' where
+----    safeMockGetChar'' mockIO = headOrError mockIO (input mockIO) <$ put mockIO { input = Unsafe.tail $ input mockIO }
+--
+----safeMockGetChar' :: SafeMockIOData -> SafeMockIOData
+----safeMockGetChar' = id
+--
+--safeMockGetChar' :: MonadState SafeMockIOData f => SafeMockIOData -> Safe (f Char)
+--safeMockGetChar' safeMockIO = safeMockGetChar'' <$> safeMockIO
+--
+--safeMockGetChar'' :: MonadState SafeMockIOData f => MockIOData -> f (Char)
+--safeMockGetChar'' mockIO = headOrError mockIO (input mockIO) <$ put (Right mockIO { input = Unsafe.tail $ input mockIO })
+--
+--safeMockGetLine :: SafeMockIO Text
+--safeMockGetLine = error ""
+--
+--safeMockPutChar :: Char -> SafeMockIO ()
+--safeMockPutChar _ = error ""
+--
+--safeMockPutInt :: Int -> SafeMockIO ()
+--safeMockPutInt _ = error ""
+--
+--
+--safeMockPutStr :: Text -> SafeMockIO ()
+--safeMockPutStr _ = error ""
+--
+--
+--safeMockLogStr :: Text -> SafeMockIO ()
+--safeMockLogStr _ = error ""
+--
+------
+--
+--type SafeMockIO = State SafeMockIOData
+--
+--createSafeMockIO :: Input -> Safe MockIOData
+--createSafeMockIO = pure . createMockIO
+--
+--type SafeMockIOData = Safe MockIOData
+--
 ----
 
 batchExecMockIO :: MockIO () -> Output
@@ -139,9 +147,10 @@ instance BusinessIO (SafeExceptT MockIO) where
   wLogStr  = safeExceptT . mockLogStr
 
 mockGetChar :: MockIO Char
-mockGetChar = mockGetChar' =<< get where
-  mockGetChar' :: MonadState MockIOData f => MockIOData -> f Char
-  mockGetChar' mockIO = headOrError mockIO (input mockIO) <$ put mockIO { input = Unsafe.tail $ input mockIO }
+mockGetChar = mockGetChar' =<< get
+
+mockGetChar' :: MonadState MockIOData f => MockIOData -> f Char
+mockGetChar' mockIO = headOrError mockIO (input mockIO) <$ put mockIO { input = Unsafe.tail $ input mockIO }
 
 mockGetLine :: MockIO Text
 mockGetLine = mockGetLine' =<< get where
@@ -180,8 +189,6 @@ getOutput mockIO = toText $ reverse $ output mockIO
 
 getLogged :: MockIOData -> Output
 getLogged mockIO = toText $ reverse $ logged mockIO
-
-type SafeMockIOData = Safe MockIOData
 
 data MockIOData = MockIOData
   { input  :: String
