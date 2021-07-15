@@ -5,7 +5,7 @@ We have spagheti ARCHITECTURE
 * [ ] stan for analysis
 * [x] hspec for unit and integration tests
 * [x] hspec-golden for golden tests
-* [ ] for benchmark tests
+* [ ] gauge for benchmark tests
 * [x] mtl for IoC
 * [ ] mono-traversable as container standard library
 * [x] relude as standard library
