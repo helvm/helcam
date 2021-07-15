@@ -3,13 +3,12 @@ module HelVM.HelMA.Automaton.IO.MockIO (
   batchLoggedSafeMockIO,
   flipOutputSafeMockIO,
   flipLoggedSafeMockIO,
-  outputSafeMockIO,
-  loggedSafeMockIO,
 
   batchOutputMockIO,
   batchLoggedMockIO,
   flipOutputMockIO,
   flipLoggedMockIO,
+  
   outputMockIO,
   loggedMockIO,
 
@@ -28,36 +27,32 @@ import qualified Relude.Unsafe as Unsafe
 
 --FIXME
 batchOutputSafeMockIO :: MockIO (Safe ()) -> Safe Output
-batchOutputSafeMockIO = flipOutputSafeMockIO ""
+batchOutputSafeMockIO = pure . batchOutputMockIO
 
 batchLoggedSafeMockIO :: MockIO (Safe ()) -> Safe Output
-batchLoggedSafeMockIO = flipLoggedSafeMockIO ""
+batchLoggedSafeMockIO = pure . batchLoggedMockIO
 
 flipOutputSafeMockIO :: Input -> MockIO (Safe ()) -> Safe Output
-flipOutputSafeMockIO = flip outputSafeMockIO
+flipOutputSafeMockIO i = pure . flipOutputMockIO i
 
 flipLoggedSafeMockIO :: Input -> MockIO (Safe ()) -> Safe Output
-flipLoggedSafeMockIO = flip loggedSafeMockIO
-
-outputSafeMockIO :: MockIO (Safe ()) -> Input -> Safe Output
-outputSafeMockIO mockIO = pure . outputMockIO mockIO
-
-loggedSafeMockIO :: MockIO (Safe ()) -> Input -> Safe Output
-loggedSafeMockIO mockIO = pure . loggedMockIO mockIO
+flipLoggedSafeMockIO i = pure . flipLoggedMockIO i
 
 ----
 
-batchOutputMockIO :: MockIO () -> Output
+batchOutputMockIO :: MockIO a -> Output
 batchOutputMockIO = calculateOutput . batchExecMockIO
 
-batchLoggedMockIO :: MockIO () -> Output
+batchLoggedMockIO :: MockIO a -> Output
 batchLoggedMockIO = calculateLogged . batchExecMockIO
 
-flipOutputMockIO :: Input -> MockIO () -> Output
+flipOutputMockIO :: Input -> MockIO a -> Output
 flipOutputMockIO i = calculateOutput . flipExecMockIO i
 
-flipLoggedMockIO :: Input -> MockIO () -> Output
+flipLoggedMockIO :: Input -> MockIO a -> Output
 flipLoggedMockIO i = calculateLogged . flipExecMockIO i
+
+----
 
 outputMockIO :: MockIO a -> Input -> Output
 outputMockIO mockIO  = calculateOutput . execMockIO mockIO
