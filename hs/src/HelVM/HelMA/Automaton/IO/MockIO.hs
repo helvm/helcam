@@ -1,10 +1,10 @@
 module HelVM.HelMA.Automaton.IO.MockIO (
---  batchExecSafeMockIO,
---  flipExecSafeMockIO,
---  execSafeMockIO,
---  batchEvalSafeMockIO,
---  flipEvalSafeMockIO,
---  evalSafeMockIO,
+  batchExecSafeMockIO,
+  flipExecSafeMockIO,
+  execSafeMockIO,
+  batchEvalSafeMockIO,
+  flipEvalSafeMockIO,
+  evalSafeMockIO,
 --  createSafeMockIO,
 --  SafeMockIO,
 
@@ -31,24 +31,24 @@ import HelVM.Common.Safe
 import qualified Relude.Unsafe as Unsafe
 
 
---batchExecSafeMockIO :: SafeMockIO (Safe ()) -> Safe Output
---batchExecSafeMockIO = flipExecSafeMockIO ""
---
---flipExecSafeMockIO :: Input -> SafeMockIO (Safe ()) -> Safe Output
---flipExecSafeMockIO = flip execSafeMockIO
---
---execSafeMockIO :: SafeMockIO (Safe ()) -> Input -> Safe Output
---execSafeMockIO safeMockIO input = getOutput <$> execState safeMockIO (createSafeMockIO input)
---
---batchEvalSafeMockIO :: SafeMockIO (Safe ()) -> Safe Output
---batchEvalSafeMockIO = flipEvalSafeMockIO ""
---
---flipEvalSafeMockIO :: Input -> SafeMockIO (Safe ()) -> Safe Output
---flipEvalSafeMockIO = flip evalSafeMockIO
---
---evalSafeMockIO :: SafeMockIO (Safe ()) -> Input -> Safe Output
---evalSafeMockIO safeMockIO input = getLogged <$> execState safeMockIO (createSafeMockIO input)
---
+batchExecSafeMockIO :: MockIO (Safe ()) -> Safe Output
+batchExecSafeMockIO = flipExecSafeMockIO ""
+
+flipExecSafeMockIO :: Input -> MockIO (Safe ()) -> Safe Output
+flipExecSafeMockIO = flip execSafeMockIO
+
+execSafeMockIO :: MockIO (Safe ()) -> Input -> Safe Output
+execSafeMockIO safeMockIO input = Right $ getOutput $ execState safeMockIO (createMockIO input)
+
+batchEvalSafeMockIO :: MockIO (Safe ()) -> Safe Output
+batchEvalSafeMockIO = flipEvalSafeMockIO ""
+
+flipEvalSafeMockIO :: Input -> MockIO (Safe ()) -> Safe Output
+flipEvalSafeMockIO = flip evalSafeMockIO
+
+evalSafeMockIO :: MockIO (Safe ()) -> Input -> Safe Output
+evalSafeMockIO safeMockIO input = Right $ getLogged $ execState safeMockIO (createMockIO input)
+
 ------
 --
 --instance BusinessIO SafeMockIO where
