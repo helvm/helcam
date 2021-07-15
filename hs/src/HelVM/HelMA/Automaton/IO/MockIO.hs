@@ -34,7 +34,7 @@ import qualified Relude.Unsafe as Unsafe
 --FIXME
 safeExecMockIOWithInput1 :: Input
                                   -> (MockIOData -> b)
-                                  -> SafeExceptT (State MockIOData) ()
+                                  -> SafeExceptT (MockIO) ()
                                   -> Safe b
 safeExecMockIOWithInput1 input f = fmap f . safeExecMockIOWithInput input . runExceptT
 
