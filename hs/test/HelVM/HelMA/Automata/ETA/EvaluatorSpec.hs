@@ -10,7 +10,6 @@ import HelVM.HelMA.Automaton.IO.MockIO
 import HelVM.HelMA.Automaton.Types.StackType
 
 import HelVM.Common.Safe
-import HelVM.Common.SafeExceptT
 
 import System.FilePath.Posix
 
@@ -41,7 +40,7 @@ spec = do
            ] >><| stackTypes
           ) $ \(fileName , input , stackType) -> do
       let minorPath = show stackType </> fileName <> input
-      let exec f = safeIOToIO $ f (toText input) . runExceptT . uncurryEval <$> (( , stackType) <$> readEtaFile ("from-eas" </> fileName)) :: IO Text
+      let exec f = safeIOToIO $ f (toText input) . runExceptT . uncurryEval <$> (( , stackType) <$> readEtaFile ("from-eas" </> fileName))
       describe minorPath$ do
         it ("monadic" </> minorPath) $ do
           exec flipOutputSafeMockIO `goldenShouldReturn` buildAbsoluteOutFileName ("from-eas" </> "monadic" </> minorPath)
@@ -66,10 +65,9 @@ spec = do
            ] >><| stackTypes
           ) $ \(fileName , input , stackType) -> do
       let minorPath = show stackType </> fileName <> input
-      let exec f = f (toText input) . unsafeRunExceptT . uncurryEval <$> ( , stackType) <$> readEtaFile ("original" </> fileName) :: IO Text
---      let exec f = safeIOToIO $ (f (toText input)) . runExceptT . uncurryEval <$> (( , stackType) <$> readEtaFile ("original" </> fileName)) :: IO Text
+      let exec f = safeIOToIO $ (f (toText input)) . runExceptT . uncurryEval <$> (( , stackType) <$> readEtaFile ("original" </> fileName))
       describe minorPath $ do
         it ("monadic" </> minorPath) $ do
-          exec flipOutputMockIO `goldenShouldReturn` buildAbsoluteOutFileName ("original" </> "monadic" </> minorPath)
+          exec flipOutputSafeMockIO `goldenShouldReturn` buildAbsoluteOutFileName ("original" </> "monadic" </> minorPath)
         it ("logging" </> minorPath) $ do
-          exec flipLoggedMockIO `goldenShouldReturn` buildAbsoluteOutFileName ("original" </> "logging" </> minorPath)
+          exec flipLoggedSafeMockIO `goldenShouldReturn` buildAbsoluteOutFileName ("original" </> "logging" </> minorPath)
