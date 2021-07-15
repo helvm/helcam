@@ -1,12 +1,25 @@
 module HelVM.HelMA.Automaton.IO.MockIO (
+  batchExecSafeMockIO,
+  flipExecSafeMockIO,
+  execSafeMockIO,
+  batchEvalSafeMockIO,
+  flipEvalSafeMockIO,
+  evalSafeMockIO,
+  createSafeMockIO,
+  SafeMockIO,
+
   batchExecMockIO,
   flipExecMockIO,
   execMockIO,
   batchEvalMockIO,
   flipEvalMockIO,
   evalMockIO,
+  createMockIO,
+  MockIO,
+
+  getOutput,
   getLogged,
-  MockIO
+  MockIOData,
 ) where
 
 import HelVM.HelMA.Automaton.API.IOTypes
@@ -16,6 +29,72 @@ import HelVM.Common.Containers.SplitAt
 import HelVM.Common.Safe
 
 import qualified Relude.Unsafe as Unsafe
+
+
+batchExecSafeMockIO :: SafeMockIO (Safe ()) -> Safe Output
+batchExecSafeMockIO = flipExecSafeMockIO ""
+
+flipExecSafeMockIO :: Input -> SafeMockIO (Safe ()) -> Safe Output
+flipExecSafeMockIO = flip execSafeMockIO
+
+execSafeMockIO :: SafeMockIO (Safe ()) -> Input -> Safe Output
+execSafeMockIO safeMockIO input = getOutput <$> execState safeMockIO (createSafeMockIO input)
+
+batchEvalSafeMockIO :: SafeMockIO (Safe ()) -> Safe Output
+batchEvalSafeMockIO = flipEvalSafeMockIO ""
+
+flipEvalSafeMockIO :: Input -> SafeMockIO (Safe ()) -> Safe Output
+flipEvalSafeMockIO = flip evalSafeMockIO
+
+evalSafeMockIO :: SafeMockIO (Safe ()) -> Input -> Safe Output
+evalSafeMockIO safeMockIO input = getLogged <$> execState safeMockIO (createSafeMockIO input)
+
+----
+
+instance BusinessIO SafeMockIO where
+  wGetChar = safeMockGetChar
+  wGetLine = safeMockGetLine
+  wPutChar = safeMockPutChar
+  wPutInt  = safeMockPutInt
+  wPutStr  = safeMockPutStr
+  wLogStr  = safeMockLogStr
+
+instance BusinessIO (SafeExceptT SafeMockIO) where
+  wGetChar = safeExceptT   safeMockGetChar
+  wGetLine = safeExceptT   safeMockGetLine
+  wPutChar = safeExceptT . safeMockPutChar
+  wPutInt  = safeExceptT . safeMockPutInt
+  wPutStr  = safeExceptT . safeMockPutStr
+  wLogStr  = safeExceptT . safeMockLogStr
+
+safeMockGetChar :: SafeMockIO Char
+safeMockGetChar = error ""
+
+safeMockGetLine :: SafeMockIO Text
+safeMockGetLine = error ""
+
+safeMockPutChar :: Char -> SafeMockIO ()
+safeMockPutChar _ = error ""
+
+safeMockPutInt :: Int -> SafeMockIO ()
+safeMockPutInt _ = error ""
+
+
+safeMockPutStr :: Text -> SafeMockIO ()
+safeMockPutStr _ = error ""
+
+
+safeMockLogStr :: Text -> SafeMockIO ()
+safeMockLogStr _ = error ""
+
+----
+
+type SafeMockIO = State (Safe MockIOData)
+
+createSafeMockIO :: Input -> Safe MockIOData
+createSafeMockIO = pure . createMockIO
+
+----
 
 batchExecMockIO :: MockIO () -> Output
 batchExecMockIO = flipExecMockIO ""
@@ -36,6 +115,8 @@ evalMockIO :: MockIO () -> Interact
 evalMockIO mockIO = getLogged . execState mockIO . createMockIO
 
 ----
+
+
 
 instance BusinessIO MockIO where
   wGetChar = mockGetChar
@@ -87,15 +168,16 @@ createMockIO :: Input -> MockIOData
 createMockIO i = MockIOData (toString i) "" ""
 
 getOutput :: MockIOData -> Output
-getOutput (MockIOData _ o _) = toText $ reverse o
+getOutput mockIO = toText $ reverse $ output mockIO
 
 getLogged :: MockIOData -> Output
-getLogged (MockIOData _ _ e) = toText $ reverse e
+getLogged mockIO = toText $ reverse $ logged mockIO
 
 data MockIOData = MockIOData
   { input  :: String
   , output :: String
   , logged  :: String
+--  , saved :: Text
   }
   deriving stock (Eq , Show , Read)
 
