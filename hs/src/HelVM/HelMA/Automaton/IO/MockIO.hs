@@ -49,10 +49,10 @@ flipEvalSafeMockIO = flip evalSafeMockIO
 --evalSafeMockIO mockIO = Right . evalMockIO mockIO
 
 execSafeMockIO :: MockIO (Safe ()) -> Input -> Safe Output
-execSafeMockIO mockIO input = Right $ getOutput $ getMockIO mockIO input
+execSafeMockIO mockIO input = Right $ execMockIO mockIO input
 
 evalSafeMockIO :: MockIO (Safe ()) -> Input -> Safe Output
-evalSafeMockIO mockIO input = Right $ getLogged $ getMockIO mockIO input
+evalSafeMockIO mockIO input = Right $ evalMockIO mockIO input
 
 --getSafeMockIO :: State MockIOData a -> Input -> MockIOData
 --getSafeMockIO mockIO input = execState mockIO (createMockIO input)
