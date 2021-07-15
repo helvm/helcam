@@ -43,7 +43,7 @@ flipLoggedSafeMockIO i = pure . flipLoggedMockIO i
 ----
 
 execSafeMockIOBatch :: MockIO (Safe ()) -> Safe MockIOData
-execMockIOBatch = pure . execMockIOBatch
+execSafeMockIOBatch = pure . execMockIOBatch
 
 execSafeMockIOWithInput :: Input -> MockIO (Safe ()) -> Safe MockIOData
 execSafeMockIOWithInput i = pure . execMockIOWithInput i
