@@ -158,12 +158,10 @@ mockPutInt value = mockPutInt' =<< get where
   mockPutInt' :: MonadState MockIOData f => MockIOData -> f ()
   mockPutInt' mockIO = put $ mockIO { output = chr  value : output mockIO }
 
-
 mockPutStr :: Text -> MockIO ()
 mockPutStr text = mockPutStr' =<< get where
   mockPutStr' :: MonadState MockIOData f => MockIOData -> f ()
   mockPutStr' mockIO = put $ mockIO { output = reverse (toString text) <> output mockIO }
-
 
 mockLogStr :: Text -> MockIO ()
 mockLogStr text = mockLogStr' =<< get where
