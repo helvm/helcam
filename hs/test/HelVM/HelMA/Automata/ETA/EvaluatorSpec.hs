@@ -9,8 +9,6 @@ import HelVM.WrappedGoldenIO
 import HelVM.HelMA.Automaton.IO.MockIO
 import HelVM.HelMA.Automaton.Types.StackType
 
-import HelVM.Common.Safe
-
 import System.FilePath.Posix
 
 import Test.Hspec
@@ -39,13 +37,13 @@ spec = do
            , ("bottles" , ""   )
            ] >><| stackTypes
           ) $ \(fileName , input , stackType) -> do
-      let exec f = safeIOToIO $ f (toText input) . runExceptT . uncurryEval <$> (( , stackType) <$> readEtaFile ("from-eas" </> fileName))
+      let exec f = f (toText input) . runExceptT . uncurryEval <$> (( , stackType) <$> readEtaFile ("from-eas" </> fileName))
       let minorPath = show stackType </> fileName <> input
       describe minorPath$ do
         it ("monadic" </> minorPath) $ do
-          exec flipOutputSafeMockIO `goldenShouldIO` buildAbsoluteOutFileName ("from-eas" </> "monadic" </> minorPath)
+          exec flipOutputSafeMockIO `goldenShouldSafeIO` buildAbsoluteOutFileName ("from-eas" </> "monadic" </> minorPath)
         it ("logging" </> minorPath) $ do
-          exec flipLoggedSafeMockIO `goldenShouldIO` buildAbsoluteOutFileName ("from-eas" </> "logging" </> minorPath)
+          exec flipLoggedSafeMockIO `goldenShouldSafeIO` buildAbsoluteOutFileName ("from-eas" </> "logging" </> minorPath)
 
   describe "original" $ do
     forM_ ([ ("hello"   , "" )
@@ -64,10 +62,10 @@ spec = do
            , ("crlf"    , "" )
            ] >><| stackTypes
           ) $ \(fileName , input , stackType) -> do
-      let exec f = safeIOToIO $ f (toText input) . runExceptT . uncurryEval <$> (( , stackType) <$> readEtaFile ("original" </> fileName))
+      let exec f = f (toText input) . runExceptT . uncurryEval <$> (( , stackType) <$> readEtaFile ("original" </> fileName))
       let minorPath = show stackType </> fileName <> input
       describe minorPath $ do
         it ("monadic" </> minorPath) $ do
-          exec flipOutputSafeMockIO `goldenShouldIO` buildAbsoluteOutFileName ("original" </> "monadic" </> minorPath)
+          exec flipOutputSafeMockIO `goldenShouldSafeIO` buildAbsoluteOutFileName ("original" </> "monadic" </> minorPath)
         it ("logging" </> minorPath) $ do
-          exec flipLoggedSafeMockIO `goldenShouldIO` buildAbsoluteOutFileName ("original" </> "logging" </> minorPath)
+          exec flipLoggedSafeMockIO `goldenShouldSafeIO` buildAbsoluteOutFileName ("original" </> "logging" </> minorPath)

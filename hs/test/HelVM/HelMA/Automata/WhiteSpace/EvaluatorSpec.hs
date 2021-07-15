@@ -13,8 +13,6 @@ import HelVM.HelMA.Automaton.Types.RAMType
 import HelVM.HelMA.Automaton.Types.StackType
 import HelVM.HelMA.Automaton.Types.TokenType
 
-import HelVM.Common.Safe
-
 import System.FilePath.Posix
 
 import Test.Hspec
