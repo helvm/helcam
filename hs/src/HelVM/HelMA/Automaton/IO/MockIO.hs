@@ -49,10 +49,13 @@ flipEvalSafeMockIO = flip evalSafeMockIO
 --evalSafeMockIO mockIO = Right . evalMockIO mockIO
 
 execSafeMockIO :: MockIO (Safe ()) -> Input -> Safe Output
-execSafeMockIO mockIO input = Right $ getOutput $ execState mockIO (createMockIO input)
+execSafeMockIO mockIO input = Right $ getOutput $ getMockIO mockIO input
 
 evalSafeMockIO :: MockIO (Safe ()) -> Input -> Safe Output
-evalSafeMockIO mockIO input = Right $ getLogged $ execState mockIO (createMockIO input)
+evalSafeMockIO mockIO input = Right $ getLogged $ getMockIO mockIO input
+
+--getSafeMockIO :: State MockIOData a -> Input -> MockIOData
+--getSafeMockIO mockIO input = execState mockIO (createMockIO input)
 
 ----
 
@@ -68,24 +71,16 @@ flipExecMockIO = flip execMockIO
 flipEvalMockIO :: Input -> MockIO () -> Output
 flipEvalMockIO = flip evalMockIO
 
-execMockIO :: MockIO () -> Input -> Output
+execMockIO :: MockIO a -> Input -> Output
 execMockIO mockIO  = getOutput . getMockIO mockIO
 
-evalMockIO :: MockIO () -> Input -> Output
+evalMockIO :: MockIO a -> Input -> Output
 evalMockIO mockIO = getLogged . getMockIO mockIO
 
-getMockIO :: MockIO () -> Input -> MockIOData
+getMockIO :: MockIO a -> Input -> MockIOData
 getMockIO mockIO = execState mockIO . createMockIO
 
 ----
-
-instance BusinessIO MockIO where
-  wGetChar = mockGetChar
-  wGetLine = mockGetLine
-  wPutChar = mockPutChar
-  wPutInt  = mockPutInt
-  wPutStr  = mockPutStr
-  wLogStr  = mockLogStr
 
 instance BusinessIO (SafeExceptT MockIO) where
   wGetChar = safeExceptT   mockGetChar
@@ -94,6 +89,14 @@ instance BusinessIO (SafeExceptT MockIO) where
   wPutInt  = safeExceptT . mockPutInt
   wPutStr  = safeExceptT . mockPutStr
   wLogStr  = safeExceptT . mockLogStr
+
+instance BusinessIO MockIO where
+  wGetChar = mockGetChar
+  wGetLine = mockGetLine
+  wPutChar = mockPutChar
+  wPutInt  = mockPutInt
+  wPutStr  = mockPutStr
+  wLogStr  = mockLogStr
 
 mockGetChar :: MockIO Char
 mockGetChar = mockGetChar' =<< get where
