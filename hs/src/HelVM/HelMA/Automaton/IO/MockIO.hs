@@ -14,6 +14,9 @@ module HelVM.HelMA.Automaton.IO.MockIO (
   outputMockIO,
   loggedMockIO,
 
+  calculateOutput,
+  calculateLogged,
+
   createMockIO,
   MockIO,
   MockIOData,
