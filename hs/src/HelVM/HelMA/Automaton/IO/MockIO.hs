@@ -69,6 +69,12 @@ instance BusinessIO (SafeExceptT SafeMockIO) where
 
 safeMockGetChar :: SafeMockIO Char
 safeMockGetChar = error ""
+--safeMockGetChar = safeMockGetChar' <$> get --where
+--  safeMockGetChar' = fmap safeMockGetChar'' where
+--    safeMockGetChar'' mockIO = headOrError mockIO (input mockIO) <$ put mockIO { input = Unsafe.tail $ input mockIO }
+
+--safeMockGetChar' :: SafeMockIOData -> SafeMockIOData
+--safeMockGetChar' = id
 
 safeMockGetLine :: SafeMockIO Text
 safeMockGetLine = error ""
@@ -89,7 +95,7 @@ safeMockLogStr _ = error ""
 
 ----
 
-type SafeMockIO = State (Safe MockIOData)
+type SafeMockIO = State SafeMockIOData
 
 createSafeMockIO :: Input -> Safe MockIOData
 createSafeMockIO = pure . createMockIO
@@ -116,8 +122,6 @@ evalMockIO mockIO = getLogged . execState mockIO . createMockIO
 
 ----
 
-
-
 instance BusinessIO MockIO where
   wGetChar = mockGetChar
   wGetLine = mockGetLine
@@ -136,28 +140,34 @@ instance BusinessIO (SafeExceptT MockIO) where
 
 mockGetChar :: MockIO Char
 mockGetChar = mockGetChar' =<< get where
+  mockGetChar' :: MonadState MockIOData f => MockIOData -> f Char
   mockGetChar' mockIO = headOrError mockIO (input mockIO) <$ put mockIO { input = Unsafe.tail $ input mockIO }
 
 mockGetLine :: MockIO Text
 mockGetLine = mockGetLine' =<< get where
+  mockGetLine' :: MonadState MockIOData f => MockIOData -> f Text
   mockGetLine' mockIO = toText line <$ put mockIO { input = input' } where (line , input') = splitStringByLn $ input mockIO
 
 mockPutChar :: Char -> MockIO ()
 mockPutChar char = mockPutChar' =<< get where
+  mockPutChar' :: MonadState MockIOData f => MockIOData -> f ()
   mockPutChar' mockIO = put mockIO { output = char : output mockIO }
 
 mockPutInt :: Int -> MockIO ()
 mockPutInt value = mockPutInt' =<< get where
+  mockPutInt' :: MonadState MockIOData f => MockIOData -> f ()
   mockPutInt' mockIO = put $ mockIO { output = chr  value : output mockIO }
 
 
 mockPutStr :: Text -> MockIO ()
 mockPutStr text = mockPutStr' =<< get where
+  mockPutStr' :: MonadState MockIOData f => MockIOData -> f ()
   mockPutStr' mockIO = put $ mockIO { output = reverse (toString text) <> output mockIO }
 
 
 mockLogStr :: Text -> MockIO ()
 mockLogStr text = mockLogStr' =<< get where
+  mockLogStr' :: MonadState MockIOData f => MockIOData -> f ()
   mockLogStr' mockIO = put $ mockIO { logged = reverse (toString text) <> logged mockIO }
 
 ----
@@ -172,6 +182,8 @@ getOutput mockIO = toText $ reverse $ output mockIO
 
 getLogged :: MockIOData -> Output
 getLogged mockIO = toText $ reverse $ logged mockIO
+
+type SafeMockIOData = Safe MockIOData
 
 data MockIOData = MockIOData
   { input  :: String
