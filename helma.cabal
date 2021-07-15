@@ -48,7 +48,6 @@ library
         HelVM.HelMA.Automaton.Memories.StackConst
         HelVM.HelMA.Automaton.IO.BusinessIO
         HelVM.HelMA.Automaton.IO.MockIO
-        HelVM.HelMA.Automaton.IO.SafeMockIO
         HelVM.HelMA.Automaton.Types.CellType
         HelVM.HelMA.Automaton.Types.IntCellType
         HelVM.HelMA.Automaton.Types.StackType
