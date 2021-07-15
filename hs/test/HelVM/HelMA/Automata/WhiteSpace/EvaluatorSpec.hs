@@ -13,6 +13,7 @@ import HelVM.HelMA.Automaton.Types.RAMType
 import HelVM.HelMA.Automaton.Types.StackType
 import HelVM.HelMA.Automaton.Types.TokenType
 
+import HelVM.Common.Safe
 import HelVM.Common.SafeExceptT
 
 import System.FilePath.Posix
@@ -35,13 +36,13 @@ spec = do
                , ("name"         , "WriteOnly\n")
                ] >><<< options) $ \(fileName , input , ascii , stackType , ramType) -> do
           let params = (WhiteTokenType ,  , ascii , stackType , ramType) <$> readWsFile ("original" </> fileName)
-          let exec f = f input . unsafeRunExceptT . simpleEval <$> params
+          let exec f = safeIOToIO (f input . runExceptT . simpleEval <$> params)
           let minorPath = show ascii <-> show stackType <-> show ramType </> fileName
           describe minorPath $ do
             it ("monadic" </> minorPath) $ do
-              exec flipOutputMockIO `goldenShouldReturn` buildAbsoluteOutFileName (majorPath </> "monadic" </> minorPath)
+              exec flipOutputSafeMockIO `goldenShouldReturn` buildAbsoluteOutFileName (majorPath </> "monadic" </> minorPath)
             it ("logging" </> minorPath) $ do
-              exec flipLoggedMockIO `goldenShouldReturn` buildAbsoluteOutFileName (majorPath </> "logging" </> minorPath)
+              exec flipLoggedSafeMockIO `goldenShouldReturn` buildAbsoluteOutFileName (majorPath </> "logging" </> minorPath)
 
     describe "stn" $ do
 
