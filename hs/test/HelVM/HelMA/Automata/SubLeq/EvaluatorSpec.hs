@@ -8,7 +8,7 @@ import HelVM.WrappedGoldenIO
 
 import HelVM.HelMA.Automaton.IO.MockIO
 
-import HelVM.Common.SafeExceptT
+import HelVM.Common.Safe
 
 import System.FilePath.Posix
 
@@ -20,16 +20,16 @@ spec = do
   describe "simpleEvalIL" $ do
     forM_ [ ("helloSQIL" , helloSQIL)
           ] $ \(fileName , il)  -> do
-      let exec f = (f . unsafeRunExceptT . simpleEvalIL) il 
+      let exec f = safeToIO $ (f . runExceptT . simpleEvalIL) il
       describe fileName $ do
-        it "monadic"  $ do exec batchOutputMockIO `goldenShouldBe` buildAbsoluteOutFileName ("simpleEvalIL" </> "monadic" </> fileName)
-        it "monadic"  $ do exec batchLoggedMockIO `goldenShouldBe` buildAbsoluteOutFileName ("simpleEvalIL" </> "logging" </> fileName)
+        it "monadic"  $ do exec batchOutputSafeMockIO `goldenShouldReturn` buildAbsoluteOutFileName ("simpleEvalIL" </> "monadic" </> fileName)
+        it "monadic"  $ do exec batchLoggedSafeMockIO `goldenShouldReturn` buildAbsoluteOutFileName ("simpleEvalIL" </> "logging" </> fileName)
 
   describe "simpleEval" $ do
     forM_ [ ("hello"     , "" )
           , ("longHello" , "" )
           ] $ \(fileName , input)  -> do
-      let exec f = f input . unsafeRunExceptT . simpleEval <$> readSqFile fileName
+      let exec f = safeIOToIO $ f input . runExceptT . simpleEval <$> readSqFile fileName
       describe fileName $ do
-        it "monadic"  $ do exec flipOutputMockIO `goldenShouldReturn` buildAbsoluteOutFileName ("simpleEval" </> "monadic" </> fileName)
-        it "logging"  $ do exec flipLoggedMockIO `goldenShouldReturn` buildAbsoluteOutFileName ("simpleEval" </> "logging" </> fileName)
+        it "monadic"  $ do exec flipOutputSafeMockIO `goldenShouldReturn` buildAbsoluteOutFileName ("simpleEval" </> "monadic" </> fileName)
+        it "logging"  $ do exec flipLoggedSafeMockIO `goldenShouldReturn` buildAbsoluteOutFileName ("simpleEval" </> "logging" </> fileName)
