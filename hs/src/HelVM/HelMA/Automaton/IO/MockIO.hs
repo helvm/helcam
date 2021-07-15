@@ -3,12 +3,14 @@ module HelVM.HelMA.Automaton.IO.MockIO (
   batchLoggedSafeMockIO,
   flipOutputSafeMockIO,
   flipLoggedSafeMockIO,
+  execSafeMockIOBatch,
+  execSafeMockIOWithInput,
 
   batchOutputMockIO,
   batchLoggedMockIO,
   flipOutputMockIO,
   flipLoggedMockIO,
-  
+
   outputMockIO,
   loggedMockIO,
 
@@ -40,17 +42,25 @@ flipLoggedSafeMockIO i = pure . flipLoggedMockIO i
 
 ----
 
+execSafeMockIOBatch :: MockIO (Safe ()) -> Safe MockIOData
+execMockIOBatch = pure . execMockIOBatch
+
+execSafeMockIOWithInput :: Input -> MockIO (Safe ()) -> Safe MockIOData
+execMockIOWithInput i = pure . execMockIOWithInput i
+
+----
+
 batchOutputMockIO :: MockIO a -> Output
-batchOutputMockIO = calculateOutput . batchExecMockIO
+batchOutputMockIO = calculateOutput . execMockIOBatch
 
 batchLoggedMockIO :: MockIO a -> Output
-batchLoggedMockIO = calculateLogged . batchExecMockIO
+batchLoggedMockIO = calculateLogged . execMockIOBatch
 
 flipOutputMockIO :: Input -> MockIO a -> Output
-flipOutputMockIO i = calculateOutput . flipExecMockIO i
+flipOutputMockIO i = calculateOutput . execMockIOWithInput i
 
 flipLoggedMockIO :: Input -> MockIO a -> Output
-flipLoggedMockIO i = calculateLogged . flipExecMockIO i
+flipLoggedMockIO i = calculateLogged . execMockIOWithInput i
 
 ----
 
@@ -62,11 +72,11 @@ loggedMockIO mockIO = calculateLogged . execMockIO mockIO
 
 ----
 
-batchExecMockIO :: MockIO a -> MockIOData
-batchExecMockIO = flipExecMockIO ""
+execMockIOBatch :: MockIO a -> MockIOData
+execMockIOBatch = execMockIOWithInput ""
 
-flipExecMockIO :: Input -> MockIO a -> MockIOData
-flipExecMockIO = flip execMockIO
+execMockIOWithInput :: Input -> MockIO a -> MockIOData
+execMockIOWithInput = flip execMockIO
 
 execMockIO :: MockIO a -> Input -> MockIOData
 execMockIO mockIO = execState mockIO . createMockIO
