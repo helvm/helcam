@@ -43,9 +43,9 @@ spec = do
       let minorPath = show stackType </> fileName <> input
       describe minorPath$ do
         it ("monadic" </> minorPath) $ do
-          exec flipOutputSafeMockIO `goldenShouldReturn` buildAbsoluteOutFileName ("from-eas" </> "monadic" </> minorPath)
+          exec flipOutputSafeMockIO `goldenShouldIO` buildAbsoluteOutFileName ("from-eas" </> "monadic" </> minorPath)
         it ("logging" </> minorPath) $ do
-          exec flipLoggedSafeMockIO `goldenShouldReturn` buildAbsoluteOutFileName ("from-eas" </> "logging" </> minorPath)
+          exec flipLoggedSafeMockIO `goldenShouldIO` buildAbsoluteOutFileName ("from-eas" </> "logging" </> minorPath)
 
   describe "original" $ do
     forM_ ([ ("hello"   , "" )
@@ -68,6 +68,6 @@ spec = do
       let minorPath = show stackType </> fileName <> input
       describe minorPath $ do
         it ("monadic" </> minorPath) $ do
-          exec flipOutputSafeMockIO `goldenShouldReturn` buildAbsoluteOutFileName ("original" </> "monadic" </> minorPath)
+          exec flipOutputSafeMockIO `goldenShouldIO` buildAbsoluteOutFileName ("original" </> "monadic" </> minorPath)
         it ("logging" </> minorPath) $ do
-          exec flipLoggedSafeMockIO `goldenShouldReturn` buildAbsoluteOutFileName ("original" </> "logging" </> minorPath)
+          exec flipLoggedSafeMockIO `goldenShouldIO` buildAbsoluteOutFileName ("original" </> "logging" </> minorPath)

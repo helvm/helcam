@@ -23,9 +23,9 @@ spec = do
       let exec f = safeToIO $ (f . runExceptT . simpleEvalIL) il
       describe fileName $ do
         it "monadic" $ do
-          exec batchOutputSafeMockIO `goldenShouldReturn` buildAbsoluteOutFileName ("simpleEvalIL" </> "monadic" </> fileName)
+          exec batchOutputSafeMockIO `goldenShouldIO` buildAbsoluteOutFileName ("simpleEvalIL" </> "monadic" </> fileName)
         it "logging" $ do
-          exec batchLoggedSafeMockIO `goldenShouldReturn` buildAbsoluteOutFileName ("simpleEvalIL" </> "logging" </> fileName)
+          exec batchLoggedSafeMockIO `goldenShouldIO` buildAbsoluteOutFileName ("simpleEvalIL" </> "logging" </> fileName)
 
   describe "simpleEval" $ do
     forM_ [ ("hello"     , "" )
@@ -34,6 +34,6 @@ spec = do
       let exec f = safeIOToIO $ f input . runExceptT . simpleEval <$> readSqFile fileName
       describe fileName $ do
         it "monadic" $ do
-          exec flipOutputSafeMockIO `goldenShouldReturn` buildAbsoluteOutFileName ("simpleEval" </> "monadic" </> fileName)
+          exec flipOutputSafeMockIO `goldenShouldIO` buildAbsoluteOutFileName ("simpleEval" </> "monadic" </> fileName)
         it "logging" $ do
-          exec flipLoggedSafeMockIO `goldenShouldReturn` buildAbsoluteOutFileName ("simpleEval" </> "logging" </> fileName)
+          exec flipLoggedSafeMockIO `goldenShouldIO` buildAbsoluteOutFileName ("simpleEval" </> "logging" </> fileName)

@@ -25,7 +25,7 @@ spec = do
         let minorPath = "from-wsa" </> fileName
         describe minorPath $ do
           it "minified" $ do
-            show . readVisibleTokens <$> readStnFile minorPath `goldenShouldReturn` buildAbsoluteStnFileName ("lexer" </> minorPath)
+            show . readVisibleTokens <$> readStnFile minorPath `goldenShouldIO` buildAbsoluteStnFileName ("lexer" </> minorPath)
 
     describe "original" $ do
       forM_ [ ("count"        , countTL        )
@@ -41,6 +41,6 @@ spec = do
         let minorPath = "original" </> fileName
         describe minorPath $ do
           it "minified" $ do
-            show . readVisibleTokens <$> readStnFile minorPath `goldenShouldReturn` buildAbsoluteStnFileName ("lexer" </> minorPath)
+            show . readVisibleTokens <$> readStnFile minorPath `goldenShouldIO` buildAbsoluteStnFileName ("lexer" </> minorPath)
           it "tokenize" $ do
             tokenizeVisible          <$> readStnFile minorPath `shouldReturn` tl

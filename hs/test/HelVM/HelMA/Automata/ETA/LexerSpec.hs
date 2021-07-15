@@ -24,7 +24,7 @@ spec = do
           ] $ \(fileName , tl) -> do
       describe fileName $ do
         it ("minified" </> fileName) $ do
-          (show . readTokens <$> readEtaFile ("original" </> fileName)) `goldenShouldReturn` buildAbsoluteEtaFileName ("original" </> "minified" </> fileName)
+          (show . readTokens <$> readEtaFile ("original" </> fileName)) `goldenShouldIO` buildAbsoluteEtaFileName ("original" </> "minified" </> fileName)
         it ("tokenize" </> fileName) $ do
           tokenize           <$> readEtaFile ("original" </> fileName)  `shouldReturn` tl
 
@@ -48,6 +48,6 @@ spec = do
           ] $ \(fileName , tl) -> do
       describe fileName $ do
         it ("minified" </> fileName) $ do
-          (show . readTokens <$> readEtaFile ("from-eas" </> fileName)) `goldenShouldReturn` buildAbsoluteEtaFileName ("from-eas" </> "minified" </> fileName)
+          (show . readTokens <$> readEtaFile ("from-eas" </> fileName)) `goldenShouldIO` buildAbsoluteEtaFileName ("from-eas" </> "minified" </> fileName)
         it ("tokenize" </> fileName) $ do
           tokenize           <$> readEtaFile ("from-eas" </> fileName)  `shouldReturn` tl
