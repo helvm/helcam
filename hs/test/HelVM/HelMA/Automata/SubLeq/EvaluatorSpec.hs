@@ -29,8 +29,7 @@ spec = do
     forM_ [ ("hello"     , "" )
           , ("longHello" , "" )
           ] $ \(fileName , input)  -> do
-      let params = readSqFile fileName
-      let exec f = f input . unsafeRunExceptT . simpleEval <$> params 
+      let exec f = f input . unsafeRunExceptT . simpleEval <$> (readSqFile fileName) 
       describe fileName $ do
         it "monadic"  $ do exec flipOutputMockIO `goldenShouldReturn` buildAbsoluteOutFileName ("simpleEval" </> "monadic" </> fileName)
         it "logging"  $ do exec flipLoggedMockIO `goldenShouldReturn` buildAbsoluteOutFileName ("simpleEval" </> "logging" </> fileName)

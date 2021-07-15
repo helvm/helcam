@@ -35,10 +35,10 @@ spec = do
            , ("fascistHelloWorld"     , ""     )
            ] >><| [Int32Type , Word32Type]
           ) $ \(fileName , input , cellType) -> do
-      let params = ( , cellType) <$> readBfFile fileName
+      let exec f = f input . uncurryEval <$> (( , cellType) <$> readBfFile fileName)
       let minorPath = show cellType </> fileName
       describe minorPath $ do
         it ("monadic" </> minorPath) $ do
-          flipOutputMockIO input . uncurryEval <$> params `goldenShouldReturn` buildAbsoluteOutFileName ("monadic" </> minorPath)
+          exec flipOutputMockIO `goldenShouldReturn` buildAbsoluteOutFileName ("monadic" </> minorPath)
         it ("logging" </> minorPath) $ do
-          flipOutputMockIO input . uncurryEval <$> params `goldenShouldReturn` buildAbsoluteOutFileName ("logging" </> minorPath)
+          exec flipOutputMockIO `goldenShouldReturn` buildAbsoluteOutFileName ("logging" </> minorPath)
