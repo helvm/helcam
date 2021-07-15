@@ -3,8 +3,8 @@ module HelVM.HelMA.Automaton.IO.MockIO (
   batchLoggedSafeMockIO,
   flipOutputSafeMockIO,
   flipLoggedSafeMockIO,
-  execSafeMockIOBatch,
-  execSafeMockIOWithInput,
+  safeExecMockIOBatch,
+  safeExecMockIOWithInput,
 
   batchOutputMockIO,
   batchLoggedMockIO,
@@ -42,11 +42,11 @@ flipLoggedSafeMockIO i = pure . flipLoggedMockIO i
 
 ----
 
-execSafeMockIOBatch :: MockIO (Safe ()) -> Safe MockIOData
-execSafeMockIOBatch = pure . execMockIOBatch
+safeExecMockIOBatch :: MockIO (Safe ()) -> Safe MockIOData
+safeExecMockIOBatch = pure . execMockIOBatch
 
-execSafeMockIOWithInput :: Input -> MockIO (Safe ()) -> Safe MockIOData
-execSafeMockIOWithInput i = pure . execMockIOWithInput i
+safeExecMockIOWithInput :: Input -> MockIO (Safe ()) -> Safe MockIOData
+safeExecMockIOWithInput i = pure . execMockIOWithInput i
 
 ----
 
