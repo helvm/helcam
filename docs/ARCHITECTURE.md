@@ -12,5 +12,5 @@ We have spagheti ARCHITECTURE
 * [x] relude as standard library
 * [x] co-log for logging
 * [ ] tomland for configuration
-* [ ] for drall configuration
+* [ ] for dhall configuration
 * [x] optparse-applicative for parse options
