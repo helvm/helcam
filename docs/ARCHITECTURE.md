@@ -3,6 +3,7 @@
 We have spagheti ARCHITECTURE
 * [x] hlint for analysis
 * [ ] stan for analysis
+* [ ] weeder for analysis
 * [x] hspec for unit and integration tests
 * [x] hspec-golden for golden tests
 * [ ] gauge for benchmark tests
