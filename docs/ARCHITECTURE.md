@@ -9,4 +9,6 @@ We have spagheti ARCHITECTURE
 * [x] mtl for IoC
 * [ ] mono-traversable as container standard library
 * [x] relude as standard library
+* [x] co-log for logging
 * [x] optparse-applicative for parse options
+* [ ] for configuration
